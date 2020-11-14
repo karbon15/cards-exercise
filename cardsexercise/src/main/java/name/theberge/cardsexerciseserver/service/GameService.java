@@ -1,21 +1,29 @@
 package name.theberge.cardsexerciseserver.service;
 
-import name.theberge.cardsexerciseserver.model.Card;
-import name.theberge.cardsexerciseserver.model.Game;
-import name.theberge.cardsexerciseserver.model.Player;
+import name.theberge.cardsexerciseserver.model.*;
 
 import java.util.Collection;
 
 public interface GameService {
-    void create();
+    Game create();
 
     void delete(Game game);
 
-    void addPlayer(Player player);
+    void addPlayer(Game game, Player player);
 
-    void removePlayer(Player player);
+    void removePlayer(Game game, Player player);
 
-    Collection<Card> getCardsForPlayer(Player player);
+    Collection<Card> getCardsForPlayer(Game game, Player player);
 
-    Collection<Player> getPlayers();
+    Collection<Player> getPlayers(Game game);
+
+    void addACardDeck(CardDeck cardDeck);
+
+    Card dealAcard(Game game, Player player);
+
+    int getUndealtCardCount(Game game);
+
+    int getUndealtCardCountBySuitAndValue(Game game);
+
+    void shuffle(Game game);
 }
