@@ -1,10 +1,12 @@
 package name.theberge.cardsexerciseserver.controller;
-import name.theberge.cardsexerciseserver.exception.PlayerNotFoundException;
+import name.theberge.cardsexerciseserver.dto.CreateGameResponse;
 import name.theberge.cardsexerciseserver.model.*;
-import name.theberge.cardsexerciseserver.service.CardDeckService;
-import name.theberge.cardsexerciseserver.service.GameService;
+import name.theberge.cardsexerciseserver.unit.service.CardDeckService;
+import name.theberge.cardsexerciseserver.unit.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 public class GameServiceController {
@@ -19,15 +21,14 @@ public class GameServiceController {
     }
 
     @PostMapping(value = "/v1/game")
-    public void createGame() {
+    public CreateGameResponse createGame() {
         Game createdGame = gameService.create();
-        // TODO: Format as a CreateGameResponse
+        return new CreateGameResponse(createdGame);
     }
 
     @DeleteMapping(value = "/v1/game/{gameId}")
-    public void deleteGame(@RequestParam String gameId) {
-        //TODO; Construct a Game Object from a DeleteGameRequest
-        gameService.delete(new Game());
+    public void deleteGame(@PathVariable UUID gameId) {
+        gameService.delete(gameId);
     }
 
     @PostMapping(value = "/v1/deck")

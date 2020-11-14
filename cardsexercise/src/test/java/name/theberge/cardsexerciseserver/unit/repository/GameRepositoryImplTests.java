@@ -1,4 +1,4 @@
-package name.theberge.cardsexerciseserver.repository;
+package name.theberge.cardsexerciseserver.unit.repository;
 
 import name.theberge.cardsexerciseserver.exception.GameAlreadyExistsException;
 import name.theberge.cardsexerciseserver.exception.GameNotFoundException;
@@ -22,7 +22,7 @@ public class GameRepositoryImplTests {
         Game game = new Game();
 
         gameRepository.create(game);
-        Game readGame = gameRepository.get(game);
+        Game readGame = gameRepository.get(game.getId());
 
         Assertions.assertEquals(game.getId(), readGame.getId());
     }
@@ -42,9 +42,9 @@ public class GameRepositoryImplTests {
         Game game = new Game();
 
         gameRepository.create(game);
-        gameRepository.delete(game);
+        gameRepository.delete(game.getId());
 
-        Assertions.assertThrows(GameNotFoundException.class, () -> gameRepository.get(game));
+        Assertions.assertThrows(GameNotFoundException.class, () -> gameRepository.get(game.getId()));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class GameRepositoryImplTests {
         Game updatedGame = new Game(game);
         updatedGame.addPlayer(new Player());
         gameRepository.update(updatedGame);
-        Game readGame = gameRepository.get(game);
+        Game readGame = gameRepository.get(game.getId());
         Assertions.assertEquals(game.getPlayers(), readGame.getPlayers());
     }
 
