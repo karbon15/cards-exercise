@@ -1,9 +1,9 @@
-package name.theberge.cardsexerciseserver.repository.implementation;
+package name.theberge.cardsexerciseserver.unit.repository.implementation;
 
 import name.theberge.cardsexerciseserver.exception.GameAlreadyExistsException;
 import name.theberge.cardsexerciseserver.exception.GameNotFoundException;
 import name.theberge.cardsexerciseserver.model.Game;
-import name.theberge.cardsexerciseserver.repository.GameRepository;
+import name.theberge.cardsexerciseserver.unit.repository.GameRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -25,20 +25,20 @@ public class GameRepositoryImpl implements GameRepository {
     }
 
     @Override
-    public void delete(Game game) {
-        if (!games.containsKey(game.getId())) {
+    public void delete(UUID gameId) {
+        if (!games.containsKey(gameId)) {
            throw new GameNotFoundException();
         }
-        games.remove(game.getId());
+        games.remove(gameId);
 
     }
 
     @Override
-    public Game get(Game game) {
-        if (!games.containsKey(game.getId())) {
+    public Game get(UUID gameId) {
+        if (!games.containsKey(gameId)) {
             throw new GameNotFoundException();
         }
-        return games.get(game.getId());
+        return games.get(gameId);
     }
 
     @Override

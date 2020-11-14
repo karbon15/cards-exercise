@@ -1,9 +1,11 @@
-package name.theberge.cardsexerciseserver.service;
+package name.theberge.cardsexerciseserver.unit.service;
 
 import name.theberge.cardsexerciseserver.model.Card;
 import name.theberge.cardsexerciseserver.model.CardDeck;
 import name.theberge.cardsexerciseserver.model.Game;
 import name.theberge.cardsexerciseserver.model.GameDeck;
+
+import java.util.UUID;
 
 public interface GameDeckService {
     void addACardDeck(GameDeck gameDeck, CardDeck cardDeck);
@@ -16,7 +18,7 @@ public interface GameDeckService {
 
     void shuffle();
 
-    GameDeck getByGame(Game game);
+    GameDeck getByGameId(UUID gameId);
 
-    void deleteByGame(Game game);
+    void deleteByGameId(UUID gameId);
 }

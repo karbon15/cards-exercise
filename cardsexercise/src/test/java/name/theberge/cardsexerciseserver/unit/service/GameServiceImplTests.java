@@ -1,7 +1,7 @@
-package name.theberge.cardsexerciseserver.service;
+package name.theberge.cardsexerciseserver.unit.service;
 
 import name.theberge.cardsexerciseserver.model.Game;
-import name.theberge.cardsexerciseserver.repository.GameRepository;
+import name.theberge.cardsexerciseserver.unit.repository.GameRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
@@ -31,7 +31,7 @@ public class GameServiceImplTests {
 
         gameService.create();
 
-        Mockito.verify(gameRepository).create(ArgumentMatchers.argThat(game -> game.getId() == null));
+        Mockito.verify(gameRepository).create(ArgumentMatchers.argThat(game -> game.getId() != null));
     }
 
     @Test
@@ -39,9 +39,9 @@ public class GameServiceImplTests {
     void deletingAGame() {
         Game theGame = new Game();
 
-        gameService.delete(theGame);
+        gameService.delete(theGame.getId());
 
-        Mockito.verify(gameRepository).delete(ArgumentMatchers.argThat(game -> game.equals(theGame)));
-        Mockito.verify(gameDeckService).deleteByGame(ArgumentMatchers.argThat(game -> game.equals(theGame)));
+        Mockito.verify(gameRepository).delete(ArgumentMatchers.argThat(id -> id.equals(theGame.getId())));
+        Mockito.verify(gameDeckService).deleteByGameId(ArgumentMatchers.argThat(id -> id.equals(theGame.getId())));
     }
 }

@@ -1,13 +1,15 @@
-package name.theberge.cardsexerciseserver.service.implementation;
+package name.theberge.cardsexerciseserver.unit.service.implementation;
 
 import name.theberge.cardsexerciseserver.model.Card;
 import name.theberge.cardsexerciseserver.model.CardDeck;
 import name.theberge.cardsexerciseserver.model.Game;
 import name.theberge.cardsexerciseserver.model.GameDeck;
-import name.theberge.cardsexerciseserver.repository.GameDeckRepository;
-import name.theberge.cardsexerciseserver.service.GameDeckService;
+import name.theberge.cardsexerciseserver.unit.repository.GameDeckRepository;
+import name.theberge.cardsexerciseserver.unit.service.GameDeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class GameDeckServiceImpl implements GameDeckService {
@@ -41,12 +43,12 @@ public class GameDeckServiceImpl implements GameDeckService {
     }
 
     @Override
-    public GameDeck getByGame(Game game) {
+    public GameDeck getByGameId(UUID gameId) {
         return null;
     }
 
     @Override
-    public void deleteByGame(Game game) {
+    public void deleteByGameId(UUID gameId) {
 
     }
 }

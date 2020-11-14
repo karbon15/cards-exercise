@@ -1,8 +1,8 @@
-package name.theberge.cardsexerciseserver.repository.implementation;
+package name.theberge.cardsexerciseserver.unit.repository.implementation;
 
 import name.theberge.cardsexerciseserver.model.Game;
 import name.theberge.cardsexerciseserver.model.GameDeck;
-import name.theberge.cardsexerciseserver.repository.GameDeckRepository;
+import name.theberge.cardsexerciseserver.unit.repository.GameDeckRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

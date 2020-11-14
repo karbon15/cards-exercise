@@ -1,13 +1,14 @@
-package name.theberge.cardsexerciseserver.service;
+package name.theberge.cardsexerciseserver.unit.service;
 
 import name.theberge.cardsexerciseserver.model.*;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public interface GameService {
     Game create();
 
-    void delete(Game game);
+    void delete(UUID gameId);
 
     void addPlayer(Game game, Player player);
 
