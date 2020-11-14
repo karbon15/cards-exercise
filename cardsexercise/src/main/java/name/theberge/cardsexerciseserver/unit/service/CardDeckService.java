@@ -4,5 +4,5 @@ import name.theberge.cardsexerciseserver.model.CardDeck;
 
 public interface CardDeckService {
     CardDeck create();
-    void delete(CardDeck cardDeck);
+    CardDeck update(CardDeck cardDeck);
 }

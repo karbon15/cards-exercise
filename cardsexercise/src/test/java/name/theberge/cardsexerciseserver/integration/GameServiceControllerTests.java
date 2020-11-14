@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import name.theberge.cardsexerciseserver.dto.CreateDeckResponse;
 import name.theberge.cardsexerciseserver.dto.CreateGameResponse;
 
 import org.junit.jupiter.api.Assertions;
@@ -43,6 +44,12 @@ public class GameServiceControllerTests {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void shouldBeAbleToCreateADeck() throws Exception {
+        CreateDeckResponse response = createADeck();
+        Assertions.assertNotNull(response.getId());
+    }
+
     private CreateGameResponse createAGame() throws Exception {
         ResultActions ra =  mockMvc.perform(post("/v1/game"))
                 .andExpect(status().isOk());
@@ -51,6 +58,16 @@ public class GameServiceControllerTests {
         String contentAsString = result.getResponse().getContentAsString();
 
         return objectMapper.readValue(contentAsString, CreateGameResponse.class);
+    }
+
+    private CreateDeckResponse createADeck() throws Exception {
+        ResultActions ra =  mockMvc.perform(post("/v1/deck"))
+                .andExpect(status().isOk());
+
+        MvcResult result = ra.andReturn();
+        String contentAsString = result.getResponse().getContentAsString();
+
+        return objectMapper.readValue(contentAsString, CreateDeckResponse.class);
     }
 
 

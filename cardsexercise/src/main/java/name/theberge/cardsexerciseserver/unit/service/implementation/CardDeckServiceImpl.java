@@ -6,6 +6,8 @@ import name.theberge.cardsexerciseserver.unit.service.CardDeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class CardDeckServiceImpl implements CardDeckService {
 
@@ -15,11 +17,14 @@ public class CardDeckServiceImpl implements CardDeckService {
 
     @Override
     public CardDeck create() {
-        return null;
+        CardDeck cardDeck = new CardDeck();
+        cardDeckRepository.create(cardDeck);
+        return cardDeck;
     }
 
     @Override
-    public void delete(CardDeck cardDeck) {
-
+    public CardDeck update(CardDeck cardDeck) {
+        cardDeckRepository.update(cardDeck);
+        return cardDeck;
     }
 }

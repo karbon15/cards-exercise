@@ -59,10 +59,10 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void addACardDeck(Game game, CardDeck cardDeck) {
-        //TODO: Check if it exists
         GameDeck gameDeckFromRepo = gameDeckService.getByGameId(game.getId());
+        //CardDeck cardDeckFromRepo = cardDeckService.
         gameDeckService.addACardDeck(gameDeckFromRepo, cardDeck);
-        cardDeckService.delete(cardDeck);
+        //cardDeckService.delete(cardDeck);
     }
 
     @Override
