@@ -1,4 +1,5 @@
 package name.theberge.cardsexerciseserver.controller;
+import name.theberge.cardsexerciseserver.exception.PlayerNotFoundException;
 import name.theberge.cardsexerciseserver.model.*;
 import name.theberge.cardsexerciseserver.service.CardDeckService;
 import name.theberge.cardsexerciseserver.service.GameService;
@@ -37,7 +38,7 @@ public class GameServiceController {
 
     @PostMapping(value = "/v1/game/{gameId}/deck")
     public void addDeckToGameDeck(@RequestParam String gameId) {
-        gameService.addACardDeck(new CardDeck());
+        gameService.addACardDeck(new Game(), new CardDeck());
         //TODO SuccessResponse
     }
 
@@ -55,12 +56,13 @@ public class GameServiceController {
     @PostMapping(value = "/v1/game/{gameId}/dealACard")
     public void dealACard(@RequestParam String gameId) {
         //TODO: Get the player from the body
-        gameService.dealAcard(new Game(), new Player());
+        gameService.dealACard(new Game(), new Player());
     }
 
     @GetMapping(value = "/v1/game/{gameId}/player/{playerId}/cards")
     public void getPlayerCards(@RequestParam String gameId,
                                @RequestParam String playerId) {
+
         gameService.getCardsForPlayer(new Game(), new Player());
     }
 

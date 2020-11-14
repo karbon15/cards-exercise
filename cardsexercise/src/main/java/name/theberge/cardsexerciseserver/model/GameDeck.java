@@ -20,4 +20,8 @@ public class GameDeck extends CardDeck {
     public Card dealACard() {
         return myCards.pop();
     }
+
+    public void shuffle() {
+        throw new UnsupportedOperationException("Shuffle not supported");
+    }
 }
