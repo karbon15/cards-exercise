@@ -1,9 +1,9 @@
 package name.theberge.cardsexerciseserver.service.implementation;
 
-import name.theberge.cardsexerciseserver.model.Card;
-import name.theberge.cardsexerciseserver.model.CardDeck;
-import name.theberge.cardsexerciseserver.model.Game;
-import name.theberge.cardsexerciseserver.model.Player;
+import name.theberge.cardsexerciseserver.exception.GameServiceException;
+import name.theberge.cardsexerciseserver.exception.PlayerNotFoundException;
+import name.theberge.cardsexerciseserver.model.*;
+import name.theberge.cardsexerciseserver.repository.GameRepository;
 import name.theberge.cardsexerciseserver.service.CardDeckService;
 import name.theberge.cardsexerciseserver.service.GameDeckService;
 import name.theberge.cardsexerciseserver.service.GameService;
@@ -11,62 +11,76 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class GameServiceImpl implements GameService {
 
-    private GameDeckService gameDeckService;
-    private CardDeckService cardDeckService;
-
     @Autowired
-    public GameServiceImpl(GameDeckService gds, CardDeckService cds) {
-        gameDeckService = gds;
-        cardDeckService = cds;
-    }
+    private GameDeckService gameDeckService;
+    @Autowired
+    private CardDeckService cardDeckService;
+    @Autowired
+    private GameRepository gameRepository;
 
     @Override
     public Game create() {
-        return null;
+        Game game = new Game();
+        gameRepository.create(game);
+        return game;
     }
 
     @Override
     public void delete(Game game) {
-
+        gameDeckService.deleteByGame(game);
+        gameRepository.delete(game);
     }
 
     @Override
     public void addPlayer(Game game, Player player) {
-
+        game.addPlayer(player);
     }
 
     @Override
     public void removePlayer(Game game, Player player) {
-
+        game.removePlayer(player);
     }
 
     @Override
-    public Collection<Card> getCardsForPlayer(Game game, Player player) {
-        return null;
+    public Collection<Card> getCardsForPlayer(Game game, Player player) throws PlayerNotFoundException {
+        Game gameFromRepo = gameRepository.get(game);
+        return getGamePlayer(gameFromRepo, player).getCards();
     }
 
     @Override
     public Collection<Player> getPlayers(Game game) {
-        return null;
+        Game gameFromRepo = gameRepository.get(game);
+        return gameFromRepo.getPlayers();
     }
 
     @Override
-    public void addACardDeck(CardDeck cardDeck) {
-
+    public void addACardDeck(Game game, CardDeck cardDeck) {
+        //TODO: Check if it exists
+        GameDeck gameDeckFromRepo = gameDeckService.getByGame(game);
+        gameDeckService.addACardDeck(gameDeckFromRepo, cardDeck);
+        cardDeckService.delete(cardDeck);
     }
 
     @Override
-    public Card dealAcard(Game game, Player player) {
-        return null;
+    public Card dealACard(Game game, Player player) {
+        Game gameFromRepo = gameRepository.get(game);
+        GameDeck gameDeckFromRepo = gameDeckService.getByGame(game);
+        Player playerFromGame = getGamePlayer(gameFromRepo, player);
+        Card dealtCard = gameDeckService.dealAcard(gameDeckFromRepo);
+        playerFromGame.receiveACard(dealtCard);
+        gameRepository.update(gameFromRepo);
+        return dealtCard;
     }
 
     @Override
     public int getUndealtCardCount(Game game) {
-        return 0;
+        return gameDeckService.getUndealtCardCount();
+
     }
 
     @Override
@@ -76,6 +90,13 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void shuffle(Game game) {
+        gameDeckService.shuffle();
+    }
 
+    private Player getGamePlayer(Game game, Player player) {
+        return game.getPlayers().stream()
+                .filter(p -> p.getId().equals(player.getId()))
+                .findFirst()
+                .orElseThrow(PlayerNotFoundException::new);
     }
 }
