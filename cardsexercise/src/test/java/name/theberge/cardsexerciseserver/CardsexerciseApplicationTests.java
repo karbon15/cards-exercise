@@ -1,4 +1,4 @@
-package name.theberge;
+package name.theberge.cardsexerciseserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
