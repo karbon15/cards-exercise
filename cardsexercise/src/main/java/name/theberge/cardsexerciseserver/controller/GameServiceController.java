@@ -1,4 +1,5 @@
 package name.theberge.cardsexerciseserver.controller;
+import name.theberge.cardsexerciseserver.dto.CreateDeckResponse;
 import name.theberge.cardsexerciseserver.dto.CreateGameResponse;
 import name.theberge.cardsexerciseserver.model.*;
 import name.theberge.cardsexerciseserver.unit.service.CardDeckService;
@@ -28,13 +29,13 @@ public class GameServiceController {
 
     @DeleteMapping(value = "/v1/game/{gameId}")
     public void deleteGame(@PathVariable UUID gameId) {
-        gameService.delete(gameId);
+        gameService.delete(gameId);;
     }
 
     @PostMapping(value = "/v1/deck")
-    public void createDeck() {
+    public CreateDeckResponse createDeck() {
         CardDeck createdDeck = cardDeckService.create();
-        // TODO: Format as a CreateGameResponse
+        return new CreateDeckResponse(createdDeck);
     }
 
     @PostMapping(value = "/v1/game/{gameId}/deck")

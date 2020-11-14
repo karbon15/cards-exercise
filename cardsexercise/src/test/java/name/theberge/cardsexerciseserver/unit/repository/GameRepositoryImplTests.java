@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.UUID;
+
 @SpringBootTest
 public class GameRepositoryImplTests {
 
@@ -63,9 +65,15 @@ public class GameRepositoryImplTests {
     }
 
     @Test
-    @DisplayName("Updating a game that doesnt exist should make it unnaccessible")
+    @DisplayName("Updating a game that doesnt exist should throw an exception")
     void updatingAGameNotFound() {
         Game game = new Game();
         Assertions.assertThrows(GameNotFoundException.class, () -> gameRepository.update(game));
+    }
+
+    @Test
+    @DisplayName("Getting a game that doesnt exist")
+    void gettingAGameNotFound() {
+        Assertions.assertThrows(GameNotFoundException.class, () -> gameRepository.get(UUID.randomUUID()));
     }
 }

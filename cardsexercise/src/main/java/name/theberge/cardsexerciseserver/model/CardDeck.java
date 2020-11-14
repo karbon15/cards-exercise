@@ -1,7 +1,11 @@
 package name.theberge.cardsexerciseserver.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class CardDeck {
     private static List<Card> aNewDeck = List.of(
@@ -61,7 +65,21 @@ public class CardDeck {
 
     protected LinkedList<Card> myCards;
 
+    @Getter
+    private UUID id;
+
+    @Getter
+    @Setter
+    private Boolean isUsed = false;
+
     public CardDeck() {
+        id = UUID.randomUUID();
         myCards = new LinkedList(aNewDeck);
+    }
+
+    public CardDeck(CardDeck cd) {
+        id = cd.id;
+        myCards = new LinkedList(cd.myCards);
+        isUsed = cd.isUsed;
     }
 }
