@@ -5,8 +5,6 @@ import name.theberge.cardsexerciseserver.model.CardDeck;
 import name.theberge.cardsexerciseserver.model.GameDeck;
 
 public interface GameDeckService {
-    GameDeck create();
-
     void addACardDeck(CardDeck cardDeck);
 
     Card dealAcard();
