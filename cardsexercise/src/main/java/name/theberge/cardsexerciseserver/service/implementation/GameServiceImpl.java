@@ -104,8 +104,8 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void shuffle(Game game) {
-        gameDeckService.shuffle();
+    public void shuffle(UUID gameId) {
+        gameDeckService.shuffle(gameId);
     }
 
     private Player getGamePlayer(Game game, UUID playerId) {

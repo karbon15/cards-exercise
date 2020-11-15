@@ -2,6 +2,7 @@ package name.theberge.cardsexerciseserver.repository;
 
 import name.theberge.cardsexerciseserver.exception.DeckAlreadyExistsException;
 import name.theberge.cardsexerciseserver.exception.DeckNotFoundException;
+import name.theberge.cardsexerciseserver.model.Card;
 import name.theberge.cardsexerciseserver.model.CardDeck;
 import name.theberge.cardsexerciseserver.model.GameDeck;
 import org.junit.jupiter.api.Assertions;

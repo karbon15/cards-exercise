@@ -33,6 +33,7 @@ public class GameServiceController {
     }
 
     @DeleteMapping(value = "/v1/games/{gameId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteGame(@PathVariable UUID gameId) {
         gameService.delete(gameId);;
     }
@@ -45,6 +46,7 @@ public class GameServiceController {
     }
 
     @PostMapping(value = "/v1/games/{gameId}/deckassignments")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addDeckToGameDeck(@PathVariable UUID gameId,
                                   @RequestBody DeckAssignmentRequest deckAssignmentRequest) {
         gameService.addACardDeck(gameId, deckAssignmentRequest.getDeckId());
@@ -58,6 +60,7 @@ public class GameServiceController {
     }
 
     @DeleteMapping(value = "/v1/games/{gameId}/players/{playerId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removePlayer(@PathVariable UUID gameId,
                              @PathVariable UUID playerId) {
         gameService.removePlayer(gameId, playerId);
@@ -66,6 +69,7 @@ public class GameServiceController {
     // Shameless inspiration from
     // https://stackoverflow.com/questions/40315095/representing-moving-a-resource-in-a-restful-way
     @PostMapping(value = "/v1/games/{gameId}/dealer")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void dealCards(@PathVariable UUID gameId,
                           @RequestBody DealerRequest dealerRequest) {
         gameService.dealCards(gameId, dealerRequest.getPlayerId(), dealerRequest.getCount());
@@ -95,8 +99,9 @@ public class GameServiceController {
 
     }
 
-    @PostMapping(value = "/v1/games/{gameId}/shuffle")
-    public void shuffle(@RequestParam String gameId) {
-        gameService.shuffle(new Game());
+    @PostMapping(value = "/v1/games/{gameId}/gamedeck/shuffleaction")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void shuffle(@PathVariable UUID gameId) {
+        gameService.shuffle(gameId);
     }
 }

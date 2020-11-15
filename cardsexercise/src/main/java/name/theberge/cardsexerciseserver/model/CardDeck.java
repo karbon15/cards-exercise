@@ -3,12 +3,11 @@ package name.theberge.cardsexerciseserver.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class CardDeck {
+    private static final int SHUFFLE_ROUNDS_BY_CARD = 20;
+
     private static List<Card> aNewDeck = List.of(
         new Card(CardSuit.CLUBS, CardFaceValue.TWO),
         new Card(CardSuit.CLUBS, CardFaceValue.THREE),
@@ -85,7 +84,12 @@ public class CardDeck {
     }
 
     public void shuffle() {
-        // TODO: Explicit ask not to use this
-        Collections.shuffle(myCards);
+        Random random = new Random();
+        int deckSize = myCards.size();
+        for (int i = 0; i < SHUFFLE_ROUNDS_BY_CARD * deckSize; i++) {
+            Card c = myCards.pop();
+            int nextPosition = random.nextInt(myCards.size() -1);
+            myCards.add(nextPosition, c);
+        }
     }
 }

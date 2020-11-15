@@ -19,7 +19,7 @@ public interface GameDeckService {
 
     Map<Pair<CardSuit, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId);
 
-    void shuffle();
+    void shuffle(UUID gameId);
 
     GameDeck getByGameId(UUID gameId);
 

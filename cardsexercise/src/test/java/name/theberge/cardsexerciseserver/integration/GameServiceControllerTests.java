@@ -5,6 +5,7 @@ import name.theberge.cardsexerciseserver.dto.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,7 +48,7 @@ public class GameServiceControllerTests {
         CreateGameResponse createResponse = createAGame();
 
         ResultActions ra =  mockMvc.perform(delete("/v1/games/" + createResponse.getId()))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -78,7 +80,7 @@ public class GameServiceControllerTests {
 
         ResultActions ra =  mockMvc.perform(
                 delete("/v1/games/" + createdGame.getId() + "/players/" + createdPlayer.getId())
-        ).andExpect(status().isOk());
+        ).andExpect(status().isNoContent());
         //TODO: Observe the effects on the future read endpoints
     }
 
@@ -165,6 +167,27 @@ public class GameServiceControllerTests {
         }
     }
 
+    @Test
+    public void shouldBeAbleToShuffle() throws Exception {
+        CreateGameResponse createdGame = createAGame();
+        CreateDeckResponse createdDeck = createADeck();
+        assignADeck(createdGame.getId(), createdDeck.getId());
+
+        GetCardsBySuitAndValueResponse res = getCardCountBySuitAndValue(createdGame.getId());
+
+        shuffle(createdGame.getId());
+
+        GetCardsBySuitAndValueResponse res2 = getCardCountBySuitAndValue(createdGame.getId());
+
+        for (CardBySuitAndValue cardBySuitAndValue : res.getCardsBySuitAndValue()) {
+            Assertions.assertNotNull(res2.getCardsBySuitAndValue().stream()
+                    .filter(csv -> csv.getCardSuitAndValue().equals(cardBySuitAndValue.getCardSuitAndValue()) &&
+                            csv.getCount() == cardBySuitAndValue.getCount())
+                    .findAny());
+        }
+
+    }
+
     private CreateGameResponse createAGame() throws Exception {
         ResultActions ra =  mockMvc.perform(post("/v1/games"))
                 .andExpect(status().isCreated());
@@ -204,7 +227,7 @@ public class GameServiceControllerTests {
                 post("/v1/games/" + gameId + "/deckassignments")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dar))
-        ).andExpect(status().isOk());
+        ).andExpect(status().isNoContent());
     }
 
     private void dealCards(UUID gameId, UUID playerId, int howMany) throws Exception {
@@ -214,7 +237,7 @@ public class GameServiceControllerTests {
                 post("/v1/games/" + gameId + "/dealer")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dr))
-        ).andExpect(status().isOk());
+        ).andExpect(status().isNoContent());
     }
 
     private GetHandResponse getHand(UUID gameId, UUID playerId) throws Exception {
@@ -265,5 +288,11 @@ public class GameServiceControllerTests {
         String contentAsString = result.getResponse().getContentAsString();
 
         return objectMapper.readValue(contentAsString, GetCardsBySuitAndValueResponse.class);
+    }
+
+    private void shuffle(UUID gameId) throws Exception {
+        ResultActions ra = mockMvc.perform(
+                post("/v1/games/" + gameId + "/gamedeck/shuffleaction")
+        ).andExpect(status().isNoContent());
     }
 }
