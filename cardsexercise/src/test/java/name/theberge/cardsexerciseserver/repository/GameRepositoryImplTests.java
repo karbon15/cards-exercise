@@ -1,4 +1,4 @@
-package name.theberge.cardsexerciseserver.unit.repository;
+package name.theberge.cardsexerciseserver.repository;
 
 import name.theberge.cardsexerciseserver.exception.GameAlreadyExistsException;
 import name.theberge.cardsexerciseserver.exception.GameNotFoundException;

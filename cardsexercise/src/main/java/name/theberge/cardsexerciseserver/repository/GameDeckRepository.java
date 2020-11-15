@@ -1,6 +1,5 @@
-package name.theberge.cardsexerciseserver.unit.repository;
+package name.theberge.cardsexerciseserver.repository;
 
-import name.theberge.cardsexerciseserver.model.Game;
 import name.theberge.cardsexerciseserver.model.GameDeck;
 
 import java.util.UUID;

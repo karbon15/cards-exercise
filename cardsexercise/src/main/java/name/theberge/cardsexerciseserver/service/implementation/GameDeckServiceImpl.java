@@ -1,11 +1,11 @@
-package name.theberge.cardsexerciseserver.unit.service.implementation;
+package name.theberge.cardsexerciseserver.service.implementation;
 
 import name.theberge.cardsexerciseserver.exception.InvalidDealCountException;
 import name.theberge.cardsexerciseserver.model.Card;
 import name.theberge.cardsexerciseserver.model.CardDeck;
 import name.theberge.cardsexerciseserver.model.GameDeck;
-import name.theberge.cardsexerciseserver.unit.repository.GameDeckRepository;
-import name.theberge.cardsexerciseserver.unit.service.GameDeckService;
+import name.theberge.cardsexerciseserver.repository.GameDeckRepository;
+import name.theberge.cardsexerciseserver.service.GameDeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,13 +44,10 @@ public class GameDeckServiceImpl implements GameDeckService {
             throw new InvalidDealCountException("Cards to deal must be < than the amount of undealt cards");
         }
 
-        List listOfCards = ((LinkedList<Card>)gameDeck.getUndealtCards()).subList(0, howMany);
-        LinkedList<Card> toReturn = new LinkedList<>(listOfCards);
-
-        listOfCards.clear();
+        Collection<Card> cards = gameDeck.dealCards(howMany);
         gameDeckRepository.update(gameDeck);
 
-        return toReturn;
+        return cards;
 
     }
 

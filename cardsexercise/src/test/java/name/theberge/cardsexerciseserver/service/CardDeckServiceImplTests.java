@@ -1,10 +1,7 @@
-package name.theberge.cardsexerciseserver.unit.service;
+package name.theberge.cardsexerciseserver.service;
 
-import name.theberge.cardsexerciseserver.model.Card;
 import name.theberge.cardsexerciseserver.model.CardDeck;
-import name.theberge.cardsexerciseserver.model.Game;
-import name.theberge.cardsexerciseserver.unit.repository.CardDeckRepository;
-import name.theberge.cardsexerciseserver.unit.repository.GameRepository;
+import name.theberge.cardsexerciseserver.repository.CardDeckRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

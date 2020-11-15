@@ -1,12 +1,8 @@
-package name.theberge.cardsexerciseserver.unit.repository;
+package name.theberge.cardsexerciseserver.repository;
 
 import name.theberge.cardsexerciseserver.exception.DeckAlreadyExistsException;
 import name.theberge.cardsexerciseserver.exception.DeckNotFoundException;
-import name.theberge.cardsexerciseserver.exception.GameAlreadyExistsException;
-import name.theberge.cardsexerciseserver.exception.GameNotFoundException;
 import name.theberge.cardsexerciseserver.model.CardDeck;
-import name.theberge.cardsexerciseserver.model.Game;
-import name.theberge.cardsexerciseserver.model.Player;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

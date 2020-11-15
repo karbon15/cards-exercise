@@ -16,8 +16,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -87,14 +86,21 @@ public class GameServiceControllerTests {
         CreateDeckResponse createdDeck = createADeck();
         assignADeck(createdGame.getId(), createdDeck.getId());
 
-        DealerRequest dr = new DealerRequest(createdPlayer.getId(), 5);
-
-        ResultActions ra =  mockMvc.perform(
-                post("/v1/games/" + createdGame.getId() + "/dealer")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dr))
-        ).andExpect(status().isOk());
+        dealCards(createdGame.getId(), createdPlayer.getId(), 5);
         //TODO: Observe the effects on the future read endpoints
+    }
+
+    @Test
+    public void shouldBeAbleToRetrieveAPlayersHand() throws Exception {
+        CreateGameResponse createdGame = createAGame();
+        CreatePlayerResponse createdPlayer = createAPlayer(createdGame);
+        CreateDeckResponse createdDeck = createADeck();
+        assignADeck(createdGame.getId(), createdDeck.getId());
+        dealCards(createdGame.getId(), createdPlayer.getId(), 5);
+
+        GetHandResponse handResponse = getHand(createdGame.getId(), createdPlayer.getId());
+
+        Assertions.assertEquals(5, handResponse.getCards().size());
     }
 
     private CreateGameResponse createAGame() throws Exception {
@@ -138,6 +144,34 @@ public class GameServiceControllerTests {
                         .content(objectMapper.writeValueAsString(dar))
         ).andExpect(status().isOk());
     }
+
+    private void dealCards(UUID gameId, UUID playerId, int howMany) throws Exception {
+        DealerRequest dr = new DealerRequest(playerId, 5);
+
+        mockMvc.perform(
+                post("/v1/games/" + gameId + "/dealer")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dr))
+        ).andExpect(status().isOk());
+    }
+
+    private GetHandResponse getHand(UUID gameId, UUID playerId) throws Exception {
+        DealerRequest dr = new DealerRequest(playerId, 5);
+
+        ResultActions ra = mockMvc.perform(
+                get("/v1/games/" + gameId + "/players/" + playerId + "/hand")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dr))
+        ).andExpect(status().isOk());
+
+        MvcResult result = ra.andReturn();
+
+        String contentAsString = result.getResponse().getContentAsString();
+
+        return objectMapper.readValue(contentAsString, GetHandResponse.class);
+    }
+
+
 
 
 }

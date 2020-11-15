@@ -1,9 +1,9 @@
-package name.theberge.cardsexerciseserver.unit.repository.implementation;
+package name.theberge.cardsexerciseserver.repository.implementation;
 
 import name.theberge.cardsexerciseserver.exception.GameAlreadyExistsException;
 import name.theberge.cardsexerciseserver.exception.GameNotFoundException;
 import name.theberge.cardsexerciseserver.model.Game;
-import name.theberge.cardsexerciseserver.unit.repository.GameRepository;
+import name.theberge.cardsexerciseserver.repository.GameRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;

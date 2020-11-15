@@ -1,4 +1,4 @@
-package name.theberge.cardsexerciseserver.unit.service;
+package name.theberge.cardsexerciseserver.service;
 
 import name.theberge.cardsexerciseserver.model.*;
 
@@ -14,7 +14,7 @@ public interface GameService {
 
     void removePlayer(UUID gameId, UUID playerId);
 
-    Collection<Card> getCardsForPlayer(Game game, Player player);
+    Collection<Card> getCardsForPlayer(UUID gameId, UUID playerId);
 
     Collection<Player> getPlayers(Game game);
 

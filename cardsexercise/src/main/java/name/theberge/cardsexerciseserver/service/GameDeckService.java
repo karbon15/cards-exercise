@@ -1,4 +1,4 @@
-package name.theberge.cardsexerciseserver.unit.service;
+package name.theberge.cardsexerciseserver.service;
 
 import name.theberge.cardsexerciseserver.model.Card;
 import name.theberge.cardsexerciseserver.model.CardDeck;

@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 public class GameDeck extends CardDeck {
@@ -30,8 +31,12 @@ public class GameDeck extends CardDeck {
         return myCards;
     }
 
-    public Card dealACard() {
-        return myCards.pop();
+    public Collection<Card> dealCards(int howMany) {
+        List listOfCards = myCards.subList(0, howMany);
+        LinkedList<Card> toReturn = new LinkedList<>(listOfCards);
+
+        listOfCards.clear();
+        return toReturn;
     }
 
 }
