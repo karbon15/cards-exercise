@@ -1,9 +1,6 @@
 package name.theberge.cardsexerciseserver.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import name.theberge.cardsexerciseserver.model.CardDeck;
 
 import java.util.UUID;
@@ -12,7 +9,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CreateDeckResponse {
     @Getter
-    @Setter
     private UUID id;
 
     public CreateDeckResponse(CardDeck deck) {

@@ -27,4 +27,9 @@ public class CardDeckServiceImpl implements CardDeckService {
         cardDeckRepository.update(cardDeck);
         return cardDeck;
     }
+
+    @Override
+    public CardDeck getById(UUID deckId) {
+        return cardDeckRepository.getById(deckId);
+    }
 }

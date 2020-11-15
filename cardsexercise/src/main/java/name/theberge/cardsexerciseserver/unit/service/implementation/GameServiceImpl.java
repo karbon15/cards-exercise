@@ -1,5 +1,6 @@
 package name.theberge.cardsexerciseserver.unit.service.implementation;
 
+import name.theberge.cardsexerciseserver.exception.DeckAlreadyUsedException;
 import name.theberge.cardsexerciseserver.exception.PlayerNotFoundException;
 import name.theberge.cardsexerciseserver.model.*;
 import name.theberge.cardsexerciseserver.unit.repository.GameRepository;
@@ -26,6 +27,7 @@ public class GameServiceImpl implements GameService {
     public Game create() {
         Game game = new Game();
         gameRepository.create(game);
+        gameDeckService.create(game.getId());
         return game;
     }
 
@@ -58,19 +60,23 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void addACardDeck(Game game, CardDeck cardDeck) {
-        GameDeck gameDeckFromRepo = gameDeckService.getByGameId(game.getId());
-        //CardDeck cardDeckFromRepo = cardDeckService.
-        gameDeckService.addACardDeck(gameDeckFromRepo, cardDeck);
-        //cardDeckService.delete(cardDeck);
+    public void addACardDeck(UUID gameId, UUID deckId) {
+        GameDeck gameDeckFromRepo = gameDeckService.getByGameId(gameId);
+        CardDeck cardDeckFromRepo = cardDeckService.getById(deckId);
+        if (cardDeckFromRepo.getIsUsed()) {
+            throw new DeckAlreadyUsedException();
+        }
+        gameDeckService.addACardDeck(gameDeckFromRepo, cardDeckFromRepo);
+        cardDeckFromRepo.setIsUsed(true);
+        cardDeckService.update(cardDeckFromRepo);
     }
 
     @Override
-    public Card dealACard(Game game, Player player) {
+    public Card dealCards(Game game, Player player, int howMany) {
         Game gameFromRepo = gameRepository.get(game.getId());
         GameDeck gameDeckFromRepo = gameDeckService.getByGameId(game.getId());
         Player playerFromGame = getGamePlayer(gameFromRepo, player);
-        Card dealtCard = gameDeckService.dealAcard(gameDeckFromRepo);
+        Card dealtCard = gameDeckService.dealCards(gameDeckFromRepo, howMany);
         playerFromGame.receiveACard(dealtCard);
         gameRepository.update(gameFromRepo);
         return dealtCard;

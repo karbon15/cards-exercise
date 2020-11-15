@@ -3,6 +3,7 @@ package name.theberge.cardsexerciseserver.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -81,5 +82,10 @@ public class CardDeck {
         id = cd.id;
         myCards = new LinkedList(cd.myCards);
         isUsed = cd.isUsed;
+    }
+
+    public void shuffle() {
+        // TODO: Explicit ask not to use this
+        Collections.shuffle(myCards);
     }
 }

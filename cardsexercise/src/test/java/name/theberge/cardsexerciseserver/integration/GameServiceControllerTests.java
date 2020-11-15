@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import name.theberge.cardsexerciseserver.dto.CreateDeckResponse;
 import name.theberge.cardsexerciseserver.dto.CreateGameResponse;
 
+import name.theberge.cardsexerciseserver.dto.DeckAssignmentRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class GameServiceControllerTests {
+
+    private final String APPLICATION_JSON = "application/json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,9 +53,23 @@ public class GameServiceControllerTests {
         Assertions.assertNotNull(response.getId());
     }
 
+    @Test
+    public void shouldBeAbleToAddADeckToGameDeck() throws Exception {
+        CreateDeckResponse createdDeck = createADeck();
+        CreateGameResponse createdGame = createAGame();
+
+        DeckAssignmentRequest dar = new DeckAssignmentRequest(createdDeck.getId());
+
+        ResultActions ra =  mockMvc.perform(
+                post("/v1/game/" + createdGame.getId() + "/deckassignment")
+                        .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(dar))
+        ).andExpect(status().isOk());
+    }
+
     private CreateGameResponse createAGame() throws Exception {
         ResultActions ra =  mockMvc.perform(post("/v1/game"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         MvcResult result = ra.andReturn();
         String contentAsString = result.getResponse().getContentAsString();
@@ -62,14 +79,13 @@ public class GameServiceControllerTests {
 
     private CreateDeckResponse createADeck() throws Exception {
         ResultActions ra =  mockMvc.perform(post("/v1/deck"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         MvcResult result = ra.andReturn();
         String contentAsString = result.getResponse().getContentAsString();
 
         return objectMapper.readValue(contentAsString, CreateDeckResponse.class);
     }
-
 
 
 }

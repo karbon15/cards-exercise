@@ -58,14 +58,14 @@ public class CardDeckRepositoryImplTests {
 
     @Test
     @DisplayName("Updating a deck that doesnt exist should throw an exception")
-    void updatingAGameNotFound() {
+    void updatingADeckNotFound() {
         CardDeck deck = new CardDeck();
         Assertions.assertThrows(DeckNotFoundException.class, () -> cardDeckRepository.update(deck));
     }
 
     @Test
-    @DisplayName("Getting a game that doesnt exist")
-    void gettingAGameNotFound() {
+    @DisplayName("Getting a card deck that doesnt exist")
+    void gettingADeckNotFound() {
         Assertions.assertThrows(DeckNotFoundException.class, () -> cardDeckRepository.getById(UUID.randomUUID()));
     }
 }

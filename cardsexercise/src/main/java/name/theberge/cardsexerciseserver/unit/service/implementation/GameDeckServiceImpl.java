@@ -18,12 +18,20 @@ public class GameDeckServiceImpl implements GameDeckService {
     GameDeckRepository gameDeckRepository;
 
     @Override
-    public void addACardDeck(GameDeck gameDeck, CardDeck cardDeck) {
-
+    public GameDeck create(UUID gameId) {
+        GameDeck gameDeck = new GameDeck();
+        gameDeck.setGameId(gameId);
+        return gameDeckRepository.create(gameDeck);
     }
 
     @Override
-    public Card dealAcard(GameDeck gameDeck) {
+    public void addACardDeck(GameDeck gameDeck, CardDeck cardDeck) {
+        cardDeck.shuffle();
+        gameDeck.addADeck(cardDeck);
+    }
+
+    @Override
+    public Card dealCards(GameDeck gameDeck, int howMany) {
         return null;
     }
 
@@ -44,7 +52,7 @@ public class GameDeckServiceImpl implements GameDeckService {
 
     @Override
     public GameDeck getByGameId(UUID gameId) {
-        return null;
+        return gameDeckRepository.getByGame(gameId);
     }
 
     @Override
