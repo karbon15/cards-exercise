@@ -1,10 +1,9 @@
 package name.theberge.cardsexerciseserver.service;
 
 import name.theberge.cardsexerciseserver.exception.InvalidDealCountException;
-import name.theberge.cardsexerciseserver.model.Card;
-import name.theberge.cardsexerciseserver.model.CardDeck;
-import name.theberge.cardsexerciseserver.model.GameDeck;
+import name.theberge.cardsexerciseserver.model.*;
 import name.theberge.cardsexerciseserver.repository.GameDeckRepository;
+import org.javatuples.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 @SpringBootTest
@@ -103,4 +103,53 @@ public class GameDeckServiceImplTests {
         Mockito.verify(deckRepository).getByGame(Mockito.eq(gameId));
     }
 
+    @Test
+    @DisplayName("Getting undealt cards by suite")
+    public void gettingUndealtCardsBySuite() {
+        UUID gameId = UUID.randomUUID();
+
+        GameDeck gameDeck = new GameDeck();
+        CardDeck cardDeck1 = new CardDeck();
+        CardDeck cardDeck2 = new CardDeck();
+
+        gameDeck.addADeck(cardDeck1);
+        gameDeck.addADeck(cardDeck2);
+
+        Mockito.when(deckRepository.getByGame(Mockito.eq(gameId)))
+                .thenReturn(gameDeck);
+
+        Map<CardSuite, Integer> counts = deckService.getUndealtCardCountBySuit(gameId);
+
+        Mockito.verify(deckRepository).getByGame(Mockito.eq(gameId));
+
+        for (CardSuite c: CardSuite.values()) {
+            Assertions.assertEquals(13 * 2, counts.get(c));
+        }
+    }
+
+    @Test
+    @DisplayName("Getting undealt cards by suite and value")
+    public void gettingUndealtCardsBySuiteAndValue() {
+        UUID gameId = UUID.randomUUID();
+
+        GameDeck gameDeck = new GameDeck();
+        CardDeck cardDeck1 = new CardDeck();
+        CardDeck cardDeck2 = new CardDeck();
+
+        gameDeck.addADeck(cardDeck1);
+        gameDeck.addADeck(cardDeck2);
+
+        Mockito.when(deckRepository.getByGame(Mockito.eq(gameId)))
+                .thenReturn(gameDeck);
+
+        Map<Pair<CardSuite, CardFaceValue>, Integer> counts = deckService.getUndealtCardCountBySuitAndValue(gameId);
+
+        Mockito.verify(deckRepository).getByGame(Mockito.eq(gameId));
+
+        Assertions.assertEquals(52, counts.size());
+
+        for (Pair<CardSuite, CardFaceValue> k: counts.keySet()) {
+            Assertions.assertEquals(2, counts.get(k));
+        }
+    }
 }

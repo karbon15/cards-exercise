@@ -1,11 +1,10 @@
 package name.theberge.cardsexerciseserver.service;
 
-import name.theberge.cardsexerciseserver.model.Card;
-import name.theberge.cardsexerciseserver.model.CardDeck;
-import name.theberge.cardsexerciseserver.model.Game;
-import name.theberge.cardsexerciseserver.model.GameDeck;
+import name.theberge.cardsexerciseserver.model.*;
+import org.javatuples.Pair;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 public interface GameDeckService {
@@ -16,9 +15,9 @@ public interface GameDeckService {
 
     Collection<Card> dealCards(UUID gameId, int howMany);
 
-    int getUndealtCardCount();
+    Map<CardSuite, Integer> getUndealtCardCountBySuit(UUID gameId);
 
-    int getUndealtCardCountBySuitAndValue();
+    Map<Pair<CardSuite, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId);
 
     void shuffle();
 

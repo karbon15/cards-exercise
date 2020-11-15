@@ -1,11 +1,14 @@
 package name.theberge.cardsexerciseserver.controller;
 import name.theberge.cardsexerciseserver.dto.*;
 import name.theberge.cardsexerciseserver.formatter.GamePlayersResponseFormatter;
+import name.theberge.cardsexerciseserver.formatter.GetCardsBySuitAndValueFormatter;
+import name.theberge.cardsexerciseserver.formatter.GetCardsBySuitFormatter;
 import name.theberge.cardsexerciseserver.model.*;
 import name.theberge.cardsexerciseserver.service.CardDeckService;
 import name.theberge.cardsexerciseserver.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -79,10 +82,17 @@ public class GameServiceController {
         return GamePlayersResponseFormatter.toGamePlayersResponse(gameService.getPlayers(gameId));
     }
 
-    @GetMapping(value = "/v1/games/{gameId}/cards")
-    //TODO: Think of an accept header for undealt count or aggregate by
-    public void getUndealtCards(@RequestParam String gameId) {
-        gameService.getUndealtCardCount(new Game());
+    @GetMapping(value = "/v1/games/{gameId}/gamedeck", produces = { "application/bysuit+json"})
+    public GetCardsBySuitResponse getUndealtCardsBySuit(@PathVariable UUID gameId) {
+        return GetCardsBySuitFormatter.toGetCardsBySuitResponseFormatter(gameService.getUndealtCardCountBySuit(gameId));
+    }
+
+    @GetMapping(value = "/v1/games/{gameId}/gamedeck", produces = {
+            "application/bysuitandvalue+json", MediaType.APPLICATION_JSON_VALUE})
+    public GetCardsBySuitAndValueResponse getUndealtCardsBySuitAndValue(@PathVariable UUID gameId) {
+        return GetCardsBySuitAndValueFormatter
+                .toGetCardsBySuitAndValueResponseFormatter(gameService.getUndealtCardCountBySuitAndValue(gameId));
+
     }
 
     @PostMapping(value = "/v1/games/{gameId}/shuffle")

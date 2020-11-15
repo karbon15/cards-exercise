@@ -7,10 +7,12 @@ import name.theberge.cardsexerciseserver.repository.GameRepository;
 import name.theberge.cardsexerciseserver.service.CardDeckService;
 import name.theberge.cardsexerciseserver.service.GameDeckService;
 import name.theberge.cardsexerciseserver.service.GameService;
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -91,14 +93,14 @@ public class GameServiceImpl implements GameService {
 
 
     @Override
-    public int getUndealtCardCount(Game game) {
-        return gameDeckService.getUndealtCardCount();
+    public Map<CardSuite, Integer> getUndealtCardCountBySuit(UUID gameId) {
+        return gameDeckService.getUndealtCardCountBySuit(gameId);
 
     }
 
     @Override
-    public int getUndealtCardCountBySuitAndValue(Game game) {
-        return 0;
+    public Map<Pair<CardSuite, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId) {
+        return gameDeckService.getUndealtCardCountBySuitAndValue(gameId);
     }
 
     @Override

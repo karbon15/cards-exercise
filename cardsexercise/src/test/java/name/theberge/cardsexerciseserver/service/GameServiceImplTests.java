@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @SpringBootTest
 public class GameServiceImplTests {
@@ -242,5 +239,31 @@ public class GameServiceImplTests {
         Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
 
         Assertions.assertEquals(List.of(player1, player2), players);
+    }
+
+    @Test
+    @DisplayName("Getting undealt cards by suite should call the Game Deck Service")
+    public void gettingUndealtCardsBySuite() {
+        UUID gameId = UUID.randomUUID();
+
+        Mockito.when(gameDeckService.getUndealtCardCountBySuit(Mockito.eq(gameId)))
+                .thenReturn(new HashMap<>());
+
+        gameService.getUndealtCardCountBySuit(gameId);
+
+        Mockito.verify(gameDeckService).getUndealtCardCountBySuit(Mockito.eq(gameId));
+    }
+
+    @Test
+    @DisplayName("Getting undealt cards by suite and value should call the Game Deck Service")
+    public void gettingUndealtCardsBySuiteAndValue() {
+        UUID gameId = UUID.randomUUID();
+
+        Mockito.when(gameDeckService.getUndealtCardCountBySuitAndValue(Mockito.eq(gameId)))
+                .thenReturn(new HashMap<>());
+
+        gameService.getUndealtCardCountBySuitAndValue(gameId);
+
+        Mockito.verify(gameDeckService).getUndealtCardCountBySuitAndValue(Mockito.eq(gameId));
     }
 }
