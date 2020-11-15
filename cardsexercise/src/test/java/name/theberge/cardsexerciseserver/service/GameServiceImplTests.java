@@ -17,253 +17,257 @@ import java.util.*;
 
 @SpringBootTest
 public class GameServiceImplTests {
-    @MockBean
-    GameRepository gameRepository;
-
-    @MockBean
-    GameDeckService gameDeckService;
-
-    @MockBean
-    CardDeckService cardDeckService;
+  @MockBean
+  GameRepository gameRepository;
+
+  @MockBean
+  GameDeckService gameDeckService;
+
+  @MockBean
+  CardDeckService cardDeckService;
+
+  @Autowired
+  GameService gameService;
+  ;
+
+  @Test
+  @DisplayName("Creating a game should generate an id and call the repository")
+  void creatingAGame() {
+    Mockito.when(gameRepository.create(Mockito.any(Game.class)))
+        .then(AdditionalAnswers.returnsFirstArg());
+
+    Mockito.when(gameDeckService.create(Mockito.any(UUID.class)))
+        .thenReturn(new GameDeck());
+
+    Game createdGame = gameService.create();
+
+    Mockito.verify(gameRepository).create(ArgumentMatchers.argThat(game -> game.getId() != null));
+    Mockito.verify(gameDeckService)
+        .create(ArgumentMatchers.argThat(id -> id.equals(createdGame.getId())));
+  }
 
-    @Autowired
-    GameService gameService;
-;
+  @Test
+  @DisplayName("Deleting a game should delete the game and cascade to the game deck service")
+  void deletingAGame() {
+    Game theGame = new Game();
 
-    @Test
-    @DisplayName("Creating a game should generate an id and call the repository")
-    void creatingAGame() {
-        Mockito.when(gameRepository.create(Mockito.any(Game.class)))
-            .then(AdditionalAnswers.returnsFirstArg());
+    gameService.delete(theGame.getId());
 
-        Mockito.when(gameDeckService.create(Mockito.any(UUID.class)))
-                .thenReturn(new GameDeck());
+    Mockito.verify(gameRepository)
+        .delete(ArgumentMatchers.argThat(id -> id.equals(theGame.getId())));
+    Mockito.verify(gameDeckService)
+        .deleteByGameId(ArgumentMatchers.argThat(id -> id.equals(theGame.getId())));
+  }
 
-        Game createdGame = gameService.create();
+  @Test
+  @DisplayName("Adding a unused CardDeck to the Game Deck")
+  void addingADeckToTheGameDeck() {
+    UUID cardDeckId = UUID.randomUUID();
+    UUID gameId = UUID.randomUUID();
 
-        Mockito.verify(gameRepository).create(ArgumentMatchers.argThat(game -> game.getId() != null));
-        Mockito.verify(gameDeckService).create(ArgumentMatchers.argThat(id -> id.equals(createdGame.getId())));
-    }
+    GameDeck gameDeck = new GameDeck();
+    CardDeck cardDeck = new CardDeck();
 
-    @Test
-    @DisplayName("Deleting a game should delete the game and cascade to the game deck service")
-    void deletingAGame() {
-        Game theGame = new Game();
+    Mockito.when(gameDeckService.getByGameId(Mockito.eq(gameId)))
+        .thenReturn(gameDeck);
+    Mockito.when(cardDeckService.getById(Mockito.eq(cardDeckId)))
+        .thenReturn(cardDeck);
+    Mockito.when(cardDeckService.update(Mockito.eq(cardDeck)))
+        .thenReturn(gameDeck);
 
-        gameService.delete(theGame.getId());
+    gameService.addACardDeck(gameId, cardDeckId);
 
-        Mockito.verify(gameRepository).delete(ArgumentMatchers.argThat(id -> id.equals(theGame.getId())));
-        Mockito.verify(gameDeckService).deleteByGameId(ArgumentMatchers.argThat(id -> id.equals(theGame.getId())));
-    }
+    Mockito.verify(gameDeckService).getByGameId(ArgumentMatchers.argThat(id -> id.equals(gameId)));
+    Mockito.verify(gameDeckService).addACardDeck(
+        ArgumentMatchers.argThat(gd -> gd.equals(gameDeck)),
+        ArgumentMatchers.argThat(cd -> cd.equals(cardDeck)));
+    Mockito.verify(cardDeckService).getById(ArgumentMatchers.argThat(id -> id.equals(cardDeckId)));
+    Mockito.verify(cardDeckService).update(ArgumentMatchers.argThat(cd -> cd.getIsUsed()));
+  }
 
-    @Test
-    @DisplayName("Adding a unused CardDeck to the Game Deck")
-    void addingADeckToTheGameDeck() {
-        UUID cardDeckId = UUID.randomUUID();
-        UUID gameId = UUID.randomUUID();
+  @Test
+  @DisplayName("Adding a used CardDeck to the Game Deck should throw")
+  void addingAUsedDeckToTheGameDeck() {
+    UUID cardDeckId = UUID.randomUUID();
+    UUID gameId = UUID.randomUUID();
 
-        GameDeck gameDeck = new GameDeck();
-        CardDeck cardDeck = new CardDeck();
+    GameDeck gameDeck = new GameDeck();
+    CardDeck cardDeck = new CardDeck();
+    cardDeck.setIsUsed(true);
 
-        Mockito.when(gameDeckService.getByGameId(Mockito.eq(gameId)))
-                .thenReturn(gameDeck);
-        Mockito.when(cardDeckService.getById(Mockito.eq(cardDeckId)))
-                .thenReturn(cardDeck);
-        Mockito.when(cardDeckService.update(Mockito.eq(cardDeck)))
-                .thenReturn(gameDeck);
+    Mockito.when(gameDeckService.getByGameId(Mockito.eq(gameId)))
+        .thenReturn(gameDeck);
+    Mockito.when(cardDeckService.getById(Mockito.eq(cardDeckId)))
+        .thenReturn(cardDeck);
+    Mockito.when(cardDeckService.update(Mockito.eq(cardDeck)))
+        .thenReturn(gameDeck);
 
-        gameService.addACardDeck(gameId, cardDeckId);
+    Assertions.assertThrows(DeckAlreadyUsedException.class,
+        () -> gameService.addACardDeck(gameId, cardDeckId));
+  }
 
-        Mockito.verify(gameDeckService).getByGameId(ArgumentMatchers.argThat(id -> id.equals(gameId)));
-        Mockito.verify(gameDeckService).addACardDeck(
-                ArgumentMatchers.argThat(gd -> gd.equals(gameDeck)),
-                ArgumentMatchers.argThat(cd -> cd.equals(cardDeck)));
-        Mockito.verify(cardDeckService).getById(ArgumentMatchers.argThat(id -> id.equals(cardDeckId)));
-        Mockito.verify(cardDeckService).update(ArgumentMatchers.argThat(cd -> cd.getIsUsed()));
-    }
+  @Test
+  @DisplayName("Adding a player to a game")
+  void addingAPlayerToTheGame() {
+    UUID gameId = UUID.randomUUID();
 
-    @Test
-    @DisplayName("Adding a used CardDeck to the Game Deck should throw")
-    void addingAUsedDeckToTheGameDeck() {
-        UUID cardDeckId = UUID.randomUUID();
-        UUID gameId = UUID.randomUUID();
+    Game game = new Game();
 
-        GameDeck gameDeck = new GameDeck();
-        CardDeck cardDeck = new CardDeck();
-        cardDeck.setIsUsed(true);
+    Mockito.when(gameRepository.get(Mockito.eq(gameId)))
+        .thenReturn(game);
 
-        Mockito.when(gameDeckService.getByGameId(Mockito.eq(gameId)))
-                .thenReturn(gameDeck);
-        Mockito.when(cardDeckService.getById(Mockito.eq(cardDeckId)))
-                .thenReturn(cardDeck);
-        Mockito.when(cardDeckService.update(Mockito.eq(cardDeck)))
-                .thenReturn(gameDeck);
+    Mockito.when(gameRepository.update(Mockito.eq(game)))
+        .thenReturn(game);
 
-        Assertions.assertThrows(DeckAlreadyUsedException.class, () -> gameService.addACardDeck(gameId, cardDeckId));
-    }
+    gameService.createPlayer(gameId);
 
-    @Test
-    @DisplayName("Adding a player to a game")
-    void addingAPlayerToTheGame() {
-        UUID gameId = UUID.randomUUID();
+    Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
+    Mockito.verify(gameRepository).update(ArgumentMatchers.argThat(g -> g.equals(game)));
 
-        Game game = new Game();
+    Assertions.assertEquals(1, game.getPlayers().size());
+  }
 
-        Mockito.when(gameRepository.get(Mockito.eq(gameId)))
-                .thenReturn(game);
+  @Test
+  @DisplayName("Removing players from the game")
+  void removingAPlayerFromTheGame() {
+    UUID gameId = UUID.randomUUID();
 
-        Mockito.when(gameRepository.update(Mockito.eq(game)))
-                .thenReturn(game);
+    Game game = new Game();
+    Player player = new Player();
+    game.addPlayer(player);
 
-        gameService.createPlayer(gameId);
+    Mockito.when(gameRepository.get(Mockito.eq(gameId)))
+        .thenReturn(game);
 
-        Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
-        Mockito.verify(gameRepository).update(ArgumentMatchers.argThat(g -> g.equals(game)));
+    Mockito.when(gameRepository.update(Mockito.eq(game)))
+        .thenReturn(game);
 
-        Assertions.assertEquals(1, game.getPlayers().size());
-    }
+    gameService.removePlayer(gameId, player.getId());
 
-    @Test
-    @DisplayName("Removing players from the game")
-    void removingAPlayerFromTheGame() {
-        UUID gameId = UUID.randomUUID();
+    Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
+    Mockito.verify(gameRepository).update(ArgumentMatchers.argThat(g -> g.equals(game)));
 
-        Game game = new Game();
-        Player player = new Player();
-        game.addPlayer(player);
+    Assertions.assertEquals(0, game.getPlayers().size());
+  }
 
-        Mockito.when(gameRepository.get(Mockito.eq(gameId)))
-                .thenReturn(game);
+  @Test
+  @DisplayName("Dealing cards")
+  void dealingCards() {
+    int howMany = 5;
 
-        Mockito.when(gameRepository.update(Mockito.eq(game)))
-                .thenReturn(game);
+    UUID gameId = UUID.randomUUID();
 
-        gameService.removePlayer(gameId, player.getId());
+    Game game = new Game();
+    Player player = new Player();
+    game.addPlayer(player);
 
-        Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
-        Mockito.verify(gameRepository).update(ArgumentMatchers.argThat(g -> g.equals(game)));
+    CardDeck cardDeck = new CardDeck();
+    GameDeck gameDeck = new GameDeck();
+    gameDeck.addADeck(cardDeck);
 
-        Assertions.assertEquals(0, game.getPlayers().size());
-    }
+    Collection<Card> dealtCards = new ArrayList(gameDeck.getUndealtCards()).subList(0, howMany);
 
-    @Test
-    @DisplayName("Dealing cards")
-    void dealingCards() {
-        int howMany = 5;
+    Mockito.when(gameRepository.get(Mockito.eq(gameId)))
+        .thenReturn(game);
 
-        UUID gameId = UUID.randomUUID();
+    Mockito.when(gameDeckService.dealCards(Mockito.eq(gameId), Mockito.eq(howMany)))
+        .thenReturn(dealtCards);
 
-        Game game = new Game();
-        Player player = new Player();
-        game.addPlayer(player);
+    Mockito.when(gameRepository.update(Mockito.eq(game)))
+        .thenReturn(game);
 
-        CardDeck cardDeck = new CardDeck();
-        GameDeck gameDeck = new GameDeck();
-        gameDeck.addADeck(cardDeck);
+    gameService.dealCards(gameId, player.getId(), howMany);
 
-        Collection<Card> dealtCards = new ArrayList(gameDeck.getUndealtCards()).subList(0, howMany);
+    Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
+    Mockito.verify(gameDeckService).dealCards(Mockito.eq(gameId), Mockito.eq(howMany));
+    Mockito.verify(gameRepository).update(ArgumentMatchers.argThat(g -> g.equals(game)));
 
-        Mockito.when(gameRepository.get(Mockito.eq(gameId)))
-                .thenReturn(game);
+    Assertions.assertEquals(dealtCards, player.getCards());
+  }
 
-        Mockito.when(gameDeckService.dealCards(Mockito.eq(gameId), Mockito.eq(howMany)))
-                .thenReturn(dealtCards);
+  @Test
+  @DisplayName("Getting cards for a player")
+  void getPlayerCards() {
+    int howMany = 5;
 
-        Mockito.when(gameRepository.update(Mockito.eq(game)))
-                .thenReturn(game);
+    UUID gameId = UUID.randomUUID();
 
-        gameService.dealCards(gameId, player.getId(), howMany);
+    Game game = new Game();
+    Player player = new Player();
+    game.addPlayer(player);
 
-        Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
-        Mockito.verify(gameDeckService).dealCards(Mockito.eq(gameId), Mockito.eq(howMany));
-        Mockito.verify(gameRepository).update(ArgumentMatchers.argThat(g -> g.equals(game)));
+    CardDeck cardDeck = new CardDeck();
+    GameDeck gameDeck = new GameDeck();
+    gameDeck.addADeck(cardDeck);
 
-        Assertions.assertEquals(dealtCards, player.getCards());
-    }
+    Collection<Card> dealtCards = gameDeck.dealCards(howMany);
 
-    @Test
-    @DisplayName("Getting cards for a player")
-    void getPlayerCards() {
-        int howMany = 5;
+    player.receiveCards(dealtCards);
 
-        UUID gameId = UUID.randomUUID();
+    Mockito.when(gameRepository.get(Mockito.eq(gameId)))
+        .thenReturn(game);
 
-        Game game = new Game();
-        Player player = new Player();
-        game.addPlayer(player);
+    Collection<Card> playerCards = gameService.getCardsForPlayer(gameId, player.getId());
 
-        CardDeck cardDeck = new CardDeck();
-        GameDeck gameDeck = new GameDeck();
-        gameDeck.addADeck(cardDeck);
+    Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
 
-        Collection<Card> dealtCards = gameDeck.dealCards(howMany);
+    Assertions.assertEquals(dealtCards, playerCards);
+  }
 
-        player.receiveCards(dealtCards);
+  @Test
+  @DisplayName("Getting all players for a game")
+  void getGamePlayers() {
+    UUID gameId = UUID.randomUUID();
+    int howMany = 3;
+    Game game = new Game();
+    Player player1 = new Player();
+    Player player2 = new Player();
+    game.addPlayer(player1);
+    game.addPlayer(player2);
 
-        Mockito.when(gameRepository.get(Mockito.eq(gameId)))
-                .thenReturn(game);
+    CardDeck cardDeck = new CardDeck();
+    GameDeck gameDeck = new GameDeck();
+    gameDeck.addADeck(cardDeck);
 
-        Collection<Card> playerCards = gameService.getCardsForPlayer(gameId, player.getId());
+    Collection<Card> dealtCards = gameDeck.dealCards(howMany);
+    player1.receiveCards(dealtCards);
 
-        Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
+    Collection<Card> dealtCards2 = gameDeck.dealCards(howMany);
+    player2.receiveCards(dealtCards2);
 
-        Assertions.assertEquals(dealtCards, playerCards);
-    }
+    Mockito.when(gameRepository.get(Mockito.eq(gameId)))
+        .thenReturn(game);
 
-    @Test
-    @DisplayName("Getting all players for a game")
-    void getGamePlayers() {
-        UUID gameId = UUID.randomUUID();
-        int howMany = 3;
-        Game game = new Game();
-        Player player1 = new Player();
-        Player player2 = new Player();
-        game.addPlayer(player1);
-        game.addPlayer(player2);
+    Collection<Player> players = gameService.getPlayers(gameId);
 
-        CardDeck cardDeck = new CardDeck();
-        GameDeck gameDeck = new GameDeck();
-        gameDeck.addADeck(cardDeck);
+    Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
 
-        Collection<Card> dealtCards = gameDeck.dealCards(howMany);
-        player1.receiveCards(dealtCards);
+    Assertions.assertEquals(List.of(player1, player2), players);
+  }
 
-        Collection<Card> dealtCards2 = gameDeck.dealCards(howMany);
-        player2.receiveCards(dealtCards2);
+  @Test
+  @DisplayName("Getting undealt cards by suit should call the Game Deck Service")
+  public void gettingUndealtCardsBySuit() {
+    UUID gameId = UUID.randomUUID();
 
-        Mockito.when(gameRepository.get(Mockito.eq(gameId)))
-                .thenReturn(game);
+    Mockito.when(gameDeckService.getUndealtCardCountBySuit(Mockito.eq(gameId)))
+        .thenReturn(new HashMap<>());
 
-        Collection<Player> players = gameService.getPlayers(gameId);
+    gameService.getUndealtCardCountBySuit(gameId);
 
-        Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
+    Mockito.verify(gameDeckService).getUndealtCardCountBySuit(Mockito.eq(gameId));
+  }
 
-        Assertions.assertEquals(List.of(player1, player2), players);
-    }
+  @Test
+  @DisplayName("Getting undealt cards by suit and value should call the Game Deck Service")
+  public void gettingUndealtCardsBySuitAndValue() {
+    UUID gameId = UUID.randomUUID();
 
-    @Test
-    @DisplayName("Getting undealt cards by suit should call the Game Deck Service")
-    public void gettingUndealtCardsBySuit() {
-        UUID gameId = UUID.randomUUID();
+    Mockito.when(gameDeckService.getUndealtCardCountBySuitAndValue(Mockito.eq(gameId)))
+        .thenReturn(new HashMap<>());
 
-        Mockito.when(gameDeckService.getUndealtCardCountBySuit(Mockito.eq(gameId)))
-                .thenReturn(new HashMap<>());
+    gameService.getUndealtCardCountBySuitAndValue(gameId);
 
-        gameService.getUndealtCardCountBySuit(gameId);
-
-        Mockito.verify(gameDeckService).getUndealtCardCountBySuit(Mockito.eq(gameId));
-    }
-
-    @Test
-    @DisplayName("Getting undealt cards by suit and value should call the Game Deck Service")
-    public void gettingUndealtCardsBySuitAndValue() {
-        UUID gameId = UUID.randomUUID();
-
-        Mockito.when(gameDeckService.getUndealtCardCountBySuitAndValue(Mockito.eq(gameId)))
-                .thenReturn(new HashMap<>());
-
-        gameService.getUndealtCardCountBySuitAndValue(gameId);
-
-        Mockito.verify(gameDeckService).getUndealtCardCountBySuitAndValue(Mockito.eq(gameId));
-    }
+    Mockito.verify(gameDeckService).getUndealtCardCountBySuitAndValue(Mockito.eq(gameId));
+  }
 }

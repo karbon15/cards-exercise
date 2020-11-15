@@ -10,8 +10,8 @@ import name.theberge.cardsexerciseserver.model.CardSuit;
 @AllArgsConstructor
 @Builder
 public class CardBySuit {
-    @Getter
-    private CardSuit cardSuit;
-    @Getter
-    private Integer count;
+  @Getter
+  private CardSuit cardSuit;
+  @Getter
+  private Integer count;
 }

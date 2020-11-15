@@ -1,14 +1,13 @@
 package name.theberge.cardsexerciseserver.dto;
 
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Builder
 public class PlayerWithScore {
-    @Getter
-    private UUID id;
-    @Getter
-    private int score;
+  @Getter
+  private final UUID id;
+  @Getter
+  private final int score;
 }

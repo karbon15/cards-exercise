@@ -1,15 +1,16 @@
 package name.theberge.cardsexerciseserver.dto;
 
-import lombok.*;
-import org.springframework.validation.annotation.Validated;
-
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeckAssignmentRequest {
 
-    @Getter
-    @Setter
-    private UUID deckId;
+  @Getter
+  @Setter
+  private UUID deckId;
 }

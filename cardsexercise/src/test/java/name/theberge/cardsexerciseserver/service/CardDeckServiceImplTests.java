@@ -16,46 +16,47 @@ import java.util.UUID;
 
 @SpringBootTest
 public class CardDeckServiceImplTests {
-    @MockBean
-    CardDeckRepository deckRepository;
+  @MockBean
+  CardDeckRepository deckRepository;
 
-    @Autowired
-    CardDeckService deckService;
-;
+  @Autowired
+  CardDeckService deckService;
+  ;
 
-    @Test
-    @DisplayName("Creating a deck should generate an id and call the repository")
-    void creatingADeck() {
-        Mockito.when(deckRepository.create(Mockito.any(CardDeck.class)))
-            .then(AdditionalAnswers.returnsFirstArg());
+  @Test
+  @DisplayName("Creating a deck should generate an id and call the repository")
+  void creatingADeck() {
+    Mockito.when(deckRepository.create(Mockito.any(CardDeck.class)))
+        .then(AdditionalAnswers.returnsFirstArg());
 
-        deckService.create();
+    deckService.create();
 
-        Mockito.verify(deckRepository).create(ArgumentMatchers.argThat(deck -> deck.getId() != null));
-    }
+    Mockito.verify(deckRepository).create(ArgumentMatchers.argThat(deck -> deck.getId() != null));
+  }
 
-    @Test
-    @DisplayName("Updating a deck should call the repository")
-    void updatingADeck() {
-        CardDeck deck = new CardDeck();
+  @Test
+  @DisplayName("Updating a deck should call the repository")
+  void updatingADeck() {
+    CardDeck deck = new CardDeck();
 
-        deckService.update(deck);
+    deckService.update(deck);
 
-        Mockito.verify(deckRepository).update(ArgumentMatchers.argThat(deckArg -> deckArg.equals(deck)));
-    }
+    Mockito.verify(deckRepository)
+        .update(ArgumentMatchers.argThat(deckArg -> deckArg.equals(deck)));
+  }
 
-    @Test
-    @DisplayName("Getting a deck should call the repository")
-    void gettingADeck() {
-        UUID someId = UUID.randomUUID();
-        CardDeck someCardDeck = new CardDeck();
+  @Test
+  @DisplayName("Getting a deck should call the repository")
+  void gettingADeck() {
+    UUID someId = UUID.randomUUID();
+    CardDeck someCardDeck = new CardDeck();
 
-        Mockito.when(deckRepository.getById(Mockito.eq(someId)))
-                .thenReturn(someCardDeck);
+    Mockito.when(deckRepository.getById(Mockito.eq(someId)))
+        .thenReturn(someCardDeck);
 
-        CardDeck readCardDeck = deckService.getById(someId);
-        Assertions.assertEquals(someCardDeck, readCardDeck);
+    CardDeck readCardDeck = deckService.getById(someId);
+    Assertions.assertEquals(someCardDeck, readCardDeck);
 
-        Mockito.verify(deckRepository).getById(ArgumentMatchers.argThat(id -> id.equals(someId)));
-    }
+    Mockito.verify(deckRepository).getById(ArgumentMatchers.argThat(id -> id.equals(someId)));
+  }
 }
