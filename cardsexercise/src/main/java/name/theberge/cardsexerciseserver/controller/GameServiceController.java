@@ -1,8 +1,8 @@
 package name.theberge.cardsexerciseserver.controller;
 import name.theberge.cardsexerciseserver.dto.*;
 import name.theberge.cardsexerciseserver.model.*;
-import name.theberge.cardsexerciseserver.unit.service.CardDeckService;
-import name.theberge.cardsexerciseserver.unit.service.GameService;
+import name.theberge.cardsexerciseserver.service.CardDeckService;
+import name.theberge.cardsexerciseserver.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -67,11 +67,11 @@ public class GameServiceController {
         gameService.dealCards(gameId, dealerRequest.getPlayerId(), dealerRequest.getCount());
     }
 
-    @GetMapping(value = "/v1/games/{gameId}/players/{playerId}/cards")
-    public void getPlayerCards(@RequestParam String gameId,
-                               @RequestParam String playerId) {
+    @GetMapping(value = "/v1/games/{gameId}/players/{playerId}/hand")
+    public GetHandResponse getPlayerHand(@PathVariable UUID gameId,
+                                         @PathVariable UUID playerId) {
 
-        gameService.getCardsForPlayer(new Game(), new Player());
+        return new GetHandResponse(gameService.getCardsForPlayer(gameId, playerId));
     }
 
     @GetMapping(value = "/v1/games/{gameId}/players")

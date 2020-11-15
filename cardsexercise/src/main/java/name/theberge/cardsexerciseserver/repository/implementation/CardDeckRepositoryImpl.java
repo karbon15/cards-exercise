@@ -1,9 +1,9 @@
-package name.theberge.cardsexerciseserver.unit.repository.implementation;
+package name.theberge.cardsexerciseserver.repository.implementation;
 
 import name.theberge.cardsexerciseserver.exception.DeckAlreadyExistsException;
 import name.theberge.cardsexerciseserver.exception.DeckNotFoundException;
 import name.theberge.cardsexerciseserver.model.CardDeck;
-import name.theberge.cardsexerciseserver.unit.repository.CardDeckRepository;
+import name.theberge.cardsexerciseserver.repository.CardDeckRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;

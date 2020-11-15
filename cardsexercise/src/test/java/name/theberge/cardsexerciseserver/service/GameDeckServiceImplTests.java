@@ -1,12 +1,10 @@
-package name.theberge.cardsexerciseserver.unit.service;
+package name.theberge.cardsexerciseserver.service;
 
 import name.theberge.cardsexerciseserver.exception.InvalidDealCountException;
 import name.theberge.cardsexerciseserver.model.Card;
 import name.theberge.cardsexerciseserver.model.CardDeck;
-import name.theberge.cardsexerciseserver.model.Game;
 import name.theberge.cardsexerciseserver.model.GameDeck;
-import name.theberge.cardsexerciseserver.unit.repository.CardDeckRepository;
-import name.theberge.cardsexerciseserver.unit.repository.GameDeckRepository;
+import name.theberge.cardsexerciseserver.repository.GameDeckRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

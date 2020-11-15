@@ -1,12 +1,12 @@
-package name.theberge.cardsexerciseserver.unit.service.implementation;
+package name.theberge.cardsexerciseserver.service.implementation;
 
 import name.theberge.cardsexerciseserver.exception.DeckAlreadyUsedException;
 import name.theberge.cardsexerciseserver.exception.PlayerNotFoundException;
 import name.theberge.cardsexerciseserver.model.*;
-import name.theberge.cardsexerciseserver.unit.repository.GameRepository;
-import name.theberge.cardsexerciseserver.unit.service.CardDeckService;
-import name.theberge.cardsexerciseserver.unit.service.GameDeckService;
-import name.theberge.cardsexerciseserver.unit.service.GameService;
+import name.theberge.cardsexerciseserver.repository.GameRepository;
+import name.theberge.cardsexerciseserver.service.CardDeckService;
+import name.theberge.cardsexerciseserver.service.GameDeckService;
+import name.theberge.cardsexerciseserver.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,10 +55,10 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Collection<Card> getCardsForPlayer(Game game, Player player) throws PlayerNotFoundException {
-        Game gameFromRepo = gameRepository.get(game.getId());
-        //return getGamePlayer(gameFromRepo, player).getCards();
-        return null;
+    public Collection<Card> getCardsForPlayer(UUID gameId, UUID playerId) {
+        Game gameFromRepo = gameRepository.get(gameId);
+        Player playerFromRepo = getGamePlayer(gameFromRepo, playerId);
+        return playerFromRepo.getCards();
     }
 
     @Override

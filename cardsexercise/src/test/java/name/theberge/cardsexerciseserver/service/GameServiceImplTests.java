@@ -1,8 +1,8 @@
-package name.theberge.cardsexerciseserver.unit.service;
+package name.theberge.cardsexerciseserver.service;
 
 import name.theberge.cardsexerciseserver.exception.DeckAlreadyUsedException;
 import name.theberge.cardsexerciseserver.model.*;
-import name.theberge.cardsexerciseserver.unit.repository.GameRepository;
+import name.theberge.cardsexerciseserver.repository.GameRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -181,7 +181,34 @@ public class GameServiceImplTests {
         Mockito.verify(gameRepository).update(ArgumentMatchers.argThat(g -> g.equals(game)));
 
         Assertions.assertEquals(dealtCards, player.getCards());
+    }
 
+    @Test
+    @DisplayName("Getting cards for a player")
+    void getPlayerCards() {
+        int howMany = 5;
 
+        UUID gameId = UUID.randomUUID();
+
+        Game game = new Game();
+        Player player = new Player();
+        game.addPlayer(player);
+
+        CardDeck cardDeck = new CardDeck();
+        GameDeck gameDeck = new GameDeck();
+        gameDeck.addADeck(cardDeck);
+
+        Collection<Card> dealtCards = gameDeck.dealCards(howMany);
+
+        player.receiveCards(dealtCards);
+
+        Mockito.when(gameRepository.get(Mockito.eq(gameId)))
+                .thenReturn(game);
+
+        Collection<Card> playerCards = gameService.getCardsForPlayer(gameId, player.getId());
+
+        Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
+
+        Assertions.assertEquals(dealtCards, playerCards);
     }
 }
