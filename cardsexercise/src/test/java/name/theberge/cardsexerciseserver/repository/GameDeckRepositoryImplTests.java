@@ -71,4 +71,15 @@ public class GameDeckRepositoryImplTests {
     void gettingADeckNotFound() {
         Assertions.assertThrows(DeckNotFoundException.class, () -> gameDeckRepository.getByGame(UUID.randomUUID()));
     }
+
+    @Test
+    @DisplayName("An deleted deck should not be reachable")
+    void deletingADeck() {
+        GameDeck deck = new GameDeck();
+        deck.setGameId(UUID.randomUUID());
+
+        gameDeckRepository.create(deck);
+        gameDeckRepository.delete(deck.getGameId());
+        Assertions.assertThrows(DeckNotFoundException.class, () -> gameDeckRepository.getByGame(deck.getGameId()));
+    }
 }

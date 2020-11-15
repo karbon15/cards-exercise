@@ -39,6 +39,15 @@ public class GameDeckServiceImplTests {
         Mockito.verify(deckRepository).create(ArgumentMatchers.argThat(deck -> deck.getId() != null));
     }
 
+    @Test
+    @DisplayName("Deleting a deck should call the repository")
+    void deletingADeck() {
+        UUID gameId = UUID.randomUUID();
+        deckService.deleteByGameId(gameId);
+
+        Mockito.verify(deckRepository).delete(Mockito.eq(gameId));
+    }
+
 
     @Test
     @DisplayName("Dealing cards from a deck")
