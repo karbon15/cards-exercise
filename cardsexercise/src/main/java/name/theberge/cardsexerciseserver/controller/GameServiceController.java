@@ -1,10 +1,12 @@
 package name.theberge.cardsexerciseserver.controller;
 import name.theberge.cardsexerciseserver.dto.CreateDeckResponse;
 import name.theberge.cardsexerciseserver.dto.CreateGameResponse;
+import name.theberge.cardsexerciseserver.dto.DeckAssignmentRequest;
 import name.theberge.cardsexerciseserver.model.*;
 import name.theberge.cardsexerciseserver.unit.service.CardDeckService;
 import name.theberge.cardsexerciseserver.unit.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -22,6 +24,7 @@ public class GameServiceController {
     }
 
     @PostMapping(value = "/v1/game")
+    @ResponseStatus(HttpStatus.CREATED)
     public CreateGameResponse createGame() {
         Game createdGame = gameService.create();
         return new CreateGameResponse(createdGame);
@@ -33,15 +36,16 @@ public class GameServiceController {
     }
 
     @PostMapping(value = "/v1/deck")
+    @ResponseStatus(HttpStatus.CREATED)
     public CreateDeckResponse createDeck() {
         CardDeck createdDeck = cardDeckService.create();
         return new CreateDeckResponse(createdDeck);
     }
 
-    @PostMapping(value = "/v1/game/{gameId}/deck")
-    public void addDeckToGameDeck(@RequestParam String gameId) {
-        gameService.addACardDeck(new Game(), new CardDeck());
-        //TODO SuccessResponse
+    @PostMapping(value = "/v1/game/{gameId}/deckassignment")
+    public void addDeckToGameDeck(@PathVariable UUID gameId,
+                                  @RequestBody DeckAssignmentRequest deckAssignmentRequest) {
+        gameService.addACardDeck(gameId, deckAssignmentRequest.getDeckId());
     }
 
     @PostMapping(value = "/v1/game/{gameId}/player")
@@ -58,7 +62,7 @@ public class GameServiceController {
     @PostMapping(value = "/v1/game/{gameId}/dealACard")
     public void dealACard(@RequestParam String gameId) {
         //TODO: Get the player from the body
-        gameService.dealACard(new Game(), new Player());
+       // gameService.dealCards(new Game(), new Player());
     }
 
     @GetMapping(value = "/v1/game/{gameId}/player/{playerId}/cards")

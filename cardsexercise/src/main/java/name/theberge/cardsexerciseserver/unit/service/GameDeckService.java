@@ -8,9 +8,12 @@ import name.theberge.cardsexerciseserver.model.GameDeck;
 import java.util.UUID;
 
 public interface GameDeckService {
+
+    GameDeck create(UUID gameId);
+
     void addACardDeck(GameDeck gameDeck, CardDeck cardDeck);
 
-    Card dealAcard(GameDeck gameDeck);
+    Card dealCards(GameDeck gameDeck, int howMany);
 
     int getUndealtCardCount();
 

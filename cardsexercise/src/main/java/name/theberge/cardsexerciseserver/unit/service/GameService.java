@@ -18,9 +18,9 @@ public interface GameService {
 
     Collection<Player> getPlayers(Game game);
 
-    void addACardDeck(Game game, CardDeck cardDeck);
+    void addACardDeck(UUID gameId, UUID deckId);
 
-    Card dealACard(Game game, Player player);
+    Card dealCards(Game game, Player player, int howMany);
 
     int getUndealtCardCount(Game game);
 

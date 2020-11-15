@@ -1,6 +1,7 @@
 package name.theberge.cardsexerciseserver.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import name.theberge.cardsexerciseserver.model.Game;
 import name.theberge.cardsexerciseserver.model.Player;

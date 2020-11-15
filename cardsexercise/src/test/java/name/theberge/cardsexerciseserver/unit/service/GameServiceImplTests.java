@@ -1,6 +1,7 @@
 package name.theberge.cardsexerciseserver.unit.service;
 
 import name.theberge.cardsexerciseserver.model.Game;
+import name.theberge.cardsexerciseserver.model.GameDeck;
 import name.theberge.cardsexerciseserver.unit.repository.GameRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.UUID;
 
 @SpringBootTest
 public class GameServiceImplTests {
@@ -29,9 +32,13 @@ public class GameServiceImplTests {
         Mockito.when(gameRepository.create(Mockito.any(Game.class)))
             .then(AdditionalAnswers.returnsFirstArg());
 
-        gameService.create();
+        Mockito.when(gameDeckService.create(Mockito.any(UUID.class)))
+                .thenReturn(new GameDeck());
+
+        Game createdGame = gameService.create();
 
         Mockito.verify(gameRepository).create(ArgumentMatchers.argThat(game -> game.getId() != null));
+        Mockito.verify(gameDeckService).create(ArgumentMatchers.argThat(id -> id.equals(createdGame.getId())));
     }
 
     @Test
@@ -43,5 +50,10 @@ public class GameServiceImplTests {
 
         Mockito.verify(gameRepository).delete(ArgumentMatchers.argThat(id -> id.equals(theGame.getId())));
         Mockito.verify(gameDeckService).deleteByGameId(ArgumentMatchers.argThat(id -> id.equals(theGame.getId())));
+    }
+
+    @Test
+    void addingADeckToTheGameDeck() {
+
     }
 }

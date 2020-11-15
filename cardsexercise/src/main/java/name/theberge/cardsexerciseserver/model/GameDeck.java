@@ -1,12 +1,25 @@
 package name.theberge.cardsexerciseserver.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.UUID;
 
 public class GameDeck extends CardDeck {
 
+    @Getter
+    @Setter
+    private UUID gameId;
+
     public GameDeck() {
         myCards = new LinkedList();
+    }
+
+    public GameDeck(GameDeck gameDeck) {
+        this.gameId = gameDeck.gameId;
+        this.myCards = gameDeck.myCards;
     }
 
     public void addADeck(CardDeck deck) {
@@ -21,7 +34,4 @@ public class GameDeck extends CardDeck {
         return myCards.pop();
     }
 
-    public void shuffle() {
-        throw new UnsupportedOperationException("Shuffle not supported");
-    }
 }
