@@ -39,4 +39,9 @@ public class GameDeckRepositoryImpl implements GameDeckRepository {
         }
         return decks.get(gameId);
     }
+
+    @Override
+    public void delete(UUID gameId) {
+        decks.remove(gameId);
+    }
 }

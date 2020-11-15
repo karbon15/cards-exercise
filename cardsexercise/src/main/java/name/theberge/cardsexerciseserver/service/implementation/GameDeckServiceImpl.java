@@ -84,6 +84,6 @@ public class GameDeckServiceImpl implements GameDeckService {
 
     @Override
     public void deleteByGameId(UUID gameId) {
-
+        this.gameDeckRepository.delete(gameId);
     }
 }
