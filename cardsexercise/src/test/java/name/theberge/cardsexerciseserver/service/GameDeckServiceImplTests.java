@@ -161,4 +161,32 @@ public class GameDeckServiceImplTests {
             Assertions.assertEquals(2, counts.get(k));
         }
     }
+
+    @Test
+    @DisplayName("Shuffling a deck should not crash and should not lose cards")
+    void shuffling() {
+        // Technically, a shuffled deck could be exactly the same as before shuffling.
+        // Which would make nondeterministic tests.
+        // Best we can do is validate that we have the same number of cards.
+        // Another approach would be to run it many times and consider the shuffle effective
+        // if at least once it is different than the original
+
+        UUID gameId = UUID.randomUUID();
+
+        GameDeck deck = new GameDeck();
+        deck.setGameId(gameId);
+        deck.addADeck(new CardDeck());
+
+        int originalCount = deck.getUndealtCards().size();
+
+        Mockito.when(deckRepository.getByGame(Mockito.eq(gameId)))
+                .thenReturn(deck);
+
+        deckService.shuffle(gameId);
+
+        Mockito.verify(deckRepository).getByGame(Mockito.eq(gameId));
+        Mockito.verify(deckRepository).update(Mockito.eq(deck));
+
+        Assertions.assertEquals(originalCount, deck.getUndealtCards().size());
+    }
 }

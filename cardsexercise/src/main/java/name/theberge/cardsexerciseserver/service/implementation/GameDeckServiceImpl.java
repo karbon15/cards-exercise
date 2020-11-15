@@ -73,8 +73,10 @@ public class GameDeckServiceImpl implements GameDeckService {
     }
 
     @Override
-    public void shuffle() {
-
+    public void shuffle(UUID gameId) {
+        GameDeck gameDeck = gameDeckRepository.getByGame(gameId);
+        gameDeck.shuffle();
+        gameDeckRepository.update(gameDeck);
     }
 
     @Override

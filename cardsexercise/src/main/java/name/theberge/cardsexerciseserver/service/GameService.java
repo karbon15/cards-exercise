@@ -28,5 +28,5 @@ public interface GameService {
 
     Map<Pair<CardSuit, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId);
 
-    void shuffle(Game game);
+    void shuffle(UUID gameId);
 }
