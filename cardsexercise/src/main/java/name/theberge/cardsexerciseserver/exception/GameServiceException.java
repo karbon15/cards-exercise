@@ -4,5 +4,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class GameServiceException extends RuntimeException {
-    public GameServiceException(String msg) {super(msg);}
+  public GameServiceException(String msg) {
+    super(msg);
+  }
 }

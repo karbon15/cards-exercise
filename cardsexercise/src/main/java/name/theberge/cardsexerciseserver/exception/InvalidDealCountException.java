@@ -8,5 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @AllArgsConstructor
 
 public class InvalidDealCountException extends GameServiceException {
-    public InvalidDealCountException(String msg) {super(msg);}
+  public InvalidDealCountException(String msg) {
+    super(msg);
+  }
 }

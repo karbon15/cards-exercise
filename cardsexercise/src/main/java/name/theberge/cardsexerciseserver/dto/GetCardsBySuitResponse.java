@@ -1,17 +1,16 @@
 package name.theberge.cardsexerciseserver.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class GetCardsBySuitResponse {
 
-    @Getter
-    private List<CardBySuit> cardsBySuit;
+  @Getter
+  private List<CardBySuit> cardsBySuit;
 }

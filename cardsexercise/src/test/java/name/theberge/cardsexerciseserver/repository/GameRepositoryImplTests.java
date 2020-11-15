@@ -15,65 +15,66 @@ import java.util.UUID;
 @SpringBootTest
 public class GameRepositoryImplTests {
 
-    @Autowired
-    GameRepository gameRepository;
+  @Autowired
+  GameRepository gameRepository;
 
-    @Test
-    @DisplayName("Creating a game should allow reading back that same game")
-    void creatingAGame() {
-        Game game = new Game();
+  @Test
+  @DisplayName("Creating a game should allow reading back that same game")
+  void creatingAGame() {
+    Game game = new Game();
 
-        gameRepository.create(game);
-        Game readGame = gameRepository.get(game.getId());
+    gameRepository.create(game);
+    Game readGame = gameRepository.get(game.getId());
 
-        Assertions.assertEquals(game.getId(), readGame.getId());
-    }
+    Assertions.assertEquals(game.getId(), readGame.getId());
+  }
 
-    @Test
-    @DisplayName("Creating a game that already exists")
-    void creatingAGameAlreadyExisting() {
-        Game game = new Game();
+  @Test
+  @DisplayName("Creating a game that already exists")
+  void creatingAGameAlreadyExisting() {
+    Game game = new Game();
 
-        gameRepository.create(game);
-        Assertions.assertThrows(GameAlreadyExistsException.class, () -> gameRepository.create(game));
-    }
+    gameRepository.create(game);
+    Assertions.assertThrows(GameAlreadyExistsException.class, () -> gameRepository.create(game));
+  }
 
-    @Test
-    @DisplayName("Deleting a game should make it unnaccessible")
-    void deletingAGame() {
-        Game game = new Game();
+  @Test
+  @DisplayName("Deleting a game should make it unnaccessible")
+  void deletingAGame() {
+    Game game = new Game();
 
-        gameRepository.create(game);
-        gameRepository.delete(game.getId());
+    gameRepository.create(game);
+    gameRepository.delete(game.getId());
 
-        Assertions.assertThrows(GameNotFoundException.class, () -> gameRepository.get(game.getId()));
-    }
+    Assertions.assertThrows(GameNotFoundException.class, () -> gameRepository.get(game.getId()));
+  }
 
-    @Test
-    @DisplayName("An updated game should have the updated properties when read back")
-    void updatingAGame() {
-        Game game = new Game();
+  @Test
+  @DisplayName("An updated game should have the updated properties when read back")
+  void updatingAGame() {
+    Game game = new Game();
 
-        gameRepository.create(game);
+    gameRepository.create(game);
 
-        //Simulate that we persisted in a database by cloning
-        Game updatedGame = new Game(game);
-        updatedGame.addPlayer(new Player());
-        gameRepository.update(updatedGame);
-        Game readGame = gameRepository.get(game.getId());
-        Assertions.assertEquals(game.getPlayers(), readGame.getPlayers());
-    }
+    //Simulate that we persisted in a database by cloning
+    Game updatedGame = new Game(game);
+    updatedGame.addPlayer(new Player());
+    gameRepository.update(updatedGame);
+    Game readGame = gameRepository.get(game.getId());
+    Assertions.assertEquals(game.getPlayers(), readGame.getPlayers());
+  }
 
-    @Test
-    @DisplayName("Updating a game that doesnt exist should throw an exception")
-    void updatingAGameNotFound() {
-        Game game = new Game();
-        Assertions.assertThrows(GameNotFoundException.class, () -> gameRepository.update(game));
-    }
+  @Test
+  @DisplayName("Updating a game that doesnt exist should throw an exception")
+  void updatingAGameNotFound() {
+    Game game = new Game();
+    Assertions.assertThrows(GameNotFoundException.class, () -> gameRepository.update(game));
+  }
 
-    @Test
-    @DisplayName("Getting a game that doesnt exist")
-    void gettingAGameNotFound() {
-        Assertions.assertThrows(GameNotFoundException.class, () -> gameRepository.get(UUID.randomUUID()));
-    }
+  @Test
+  @DisplayName("Getting a game that doesnt exist")
+  void gettingAGameNotFound() {
+    Assertions
+        .assertThrows(GameNotFoundException.class, () -> gameRepository.get(UUID.randomUUID()));
+  }
 }

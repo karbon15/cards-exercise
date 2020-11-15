@@ -12,8 +12,8 @@ import org.javatuples.Pair;
 @AllArgsConstructor
 @Builder
 public class CardBySuitAndValue {
-    @Getter
-    private Pair<CardSuit, CardFaceValue> cardSuitAndValue;
-    @Getter
-    private Integer count;
+  @Getter
+  private Pair<CardSuit, CardFaceValue> cardSuitAndValue;
+  @Getter
+  private Integer count;
 }
