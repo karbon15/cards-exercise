@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Card {
     @Getter
-    private CardSuite suite;
+    private CardSuit suit;
     @Getter
     private CardFaceValue faceValue;
 }

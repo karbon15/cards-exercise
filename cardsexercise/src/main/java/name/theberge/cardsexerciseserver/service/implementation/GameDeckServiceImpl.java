@@ -53,22 +53,22 @@ public class GameDeckServiceImpl implements GameDeckService {
     // Didnt have it on top of my head, how to get it as Integer, rather than the long of Collectors.counting()
     // Thanks to https://stackoverflow.com/posts/50803660/revisions
     @Override
-    public Map<CardSuite, Integer> getUndealtCardCountBySuit(UUID gameId) {
+    public Map<CardSuit, Integer> getUndealtCardCountBySuit(UUID gameId) {
         // Depending on the database technology, eg SQL, aggregations at that level would be way more performant
         // than fetching the whole dataset
         return getByGameId(gameId).getUndealtCards().stream()
                 .collect(Collectors.groupingBy(
-                        Card::getSuite,
+                        Card::getSuit,
                         Collectors.reducing(0, e -> 1, Integer::sum)));
     }
 
     @Override
-    public Map<Pair<CardSuite, CardFaceValue>, Integer> getUndealtCardCountBySuitAndValue(UUID gameId) {
+    public Map<Pair<CardSuit, CardFaceValue>, Integer> getUndealtCardCountBySuitAndValue(UUID gameId) {
         // Depending on the database technology, eg SQL, aggregations at that level would be way more performant
         // than fetching the whole dataset
         return getByGameId(gameId).getUndealtCards().stream()
                 .collect(Collectors.groupingBy(
-                        card -> Pair.with(card.getSuite(), card.getFaceValue()),
+                        card -> Pair.with(card.getSuit(), card.getFaceValue()),
                         Collectors.reducing(0, e -> 1, Integer::sum)));
     }
 

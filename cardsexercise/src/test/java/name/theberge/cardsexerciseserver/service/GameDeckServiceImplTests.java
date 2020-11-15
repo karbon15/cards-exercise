@@ -104,8 +104,8 @@ public class GameDeckServiceImplTests {
     }
 
     @Test
-    @DisplayName("Getting undealt cards by suite")
-    public void gettingUndealtCardsBySuite() {
+    @DisplayName("Getting undealt cards by suit")
+    public void gettingUndealtCardsBySuit() {
         UUID gameId = UUID.randomUUID();
 
         GameDeck gameDeck = new GameDeck();
@@ -118,18 +118,18 @@ public class GameDeckServiceImplTests {
         Mockito.when(deckRepository.getByGame(Mockito.eq(gameId)))
                 .thenReturn(gameDeck);
 
-        Map<CardSuite, Integer> counts = deckService.getUndealtCardCountBySuit(gameId);
+        Map<CardSuit, Integer> counts = deckService.getUndealtCardCountBySuit(gameId);
 
         Mockito.verify(deckRepository).getByGame(Mockito.eq(gameId));
 
-        for (CardSuite c: CardSuite.values()) {
+        for (CardSuit c: CardSuit.values()) {
             Assertions.assertEquals(13 * 2, counts.get(c));
         }
     }
 
     @Test
-    @DisplayName("Getting undealt cards by suite and value")
-    public void gettingUndealtCardsBySuiteAndValue() {
+    @DisplayName("Getting undealt cards by suit and value")
+    public void gettingUndealtCardsBySuitAndValue() {
         UUID gameId = UUID.randomUUID();
 
         GameDeck gameDeck = new GameDeck();
@@ -142,13 +142,13 @@ public class GameDeckServiceImplTests {
         Mockito.when(deckRepository.getByGame(Mockito.eq(gameId)))
                 .thenReturn(gameDeck);
 
-        Map<Pair<CardSuite, CardFaceValue>, Integer> counts = deckService.getUndealtCardCountBySuitAndValue(gameId);
+        Map<Pair<CardSuit, CardFaceValue>, Integer> counts = deckService.getUndealtCardCountBySuitAndValue(gameId);
 
         Mockito.verify(deckRepository).getByGame(Mockito.eq(gameId));
 
         Assertions.assertEquals(52, counts.size());
 
-        for (Pair<CardSuite, CardFaceValue> k: counts.keySet()) {
+        for (Pair<CardSuit, CardFaceValue> k: counts.keySet()) {
             Assertions.assertEquals(2, counts.get(k));
         }
     }
