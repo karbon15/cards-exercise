@@ -31,8 +31,7 @@ public class Game {
         players.add(player);
     }
 
-    public void removePlayer(Player player) {
-        //TODO: Maybe throw if the player didnt exist
-        players.remove(player);
+    public void removePlayer(UUID playerId) {
+        players.removeIf(p -> p.getId().equals(playerId));
     }
 }

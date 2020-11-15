@@ -6,18 +6,22 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
-@NoArgsConstructor
 public class Player {
 
     @Getter
     @Setter
-    private String id;
+    private UUID id;
 
     @Getter
     private Collection<Card> cards = new ArrayList<>();
 
-    public void receiveACard(Card card) {
-        cards.add(card);
+    public Player() {
+        id = UUID.randomUUID();
+    }
+
+    public void receiveCards(Collection<Card> cardsToAdd) {
+        cards.addAll(cardsToAdd);
     }
 }
