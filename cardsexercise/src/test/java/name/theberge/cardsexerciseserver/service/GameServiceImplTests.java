@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
@@ -210,5 +211,36 @@ public class GameServiceImplTests {
         Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
 
         Assertions.assertEquals(dealtCards, playerCards);
+    }
+
+    @Test
+    @DisplayName("Getting all players for a game")
+    void getGamePlayers() {
+        UUID gameId = UUID.randomUUID();
+        int howMany = 3;
+        Game game = new Game();
+        Player player1 = new Player();
+        Player player2 = new Player();
+        game.addPlayer(player1);
+        game.addPlayer(player2);
+
+        CardDeck cardDeck = new CardDeck();
+        GameDeck gameDeck = new GameDeck();
+        gameDeck.addADeck(cardDeck);
+
+        Collection<Card> dealtCards = gameDeck.dealCards(howMany);
+        player1.receiveCards(dealtCards);
+
+        Collection<Card> dealtCards2 = gameDeck.dealCards(howMany);
+        player2.receiveCards(dealtCards2);
+
+        Mockito.when(gameRepository.get(Mockito.eq(gameId)))
+                .thenReturn(game);
+
+        Collection<Player> players = gameService.getPlayers(gameId);
+
+        Mockito.verify(gameRepository).get(ArgumentMatchers.argThat(id -> id.equals(gameId)));
+
+        Assertions.assertEquals(List.of(player1, player2), players);
     }
 }

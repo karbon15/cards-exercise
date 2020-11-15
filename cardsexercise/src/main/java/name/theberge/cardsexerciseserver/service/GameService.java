@@ -16,7 +16,7 @@ public interface GameService {
 
     Collection<Card> getCardsForPlayer(UUID gameId, UUID playerId);
 
-    Collection<Player> getPlayers(Game game);
+    Collection<Player> getPlayers(UUID gameId);
 
     void addACardDeck(UUID gameId, UUID deckId);
 

@@ -72,8 +72,8 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Collection<Player> getPlayers(Game game) {
-        Game gameFromRepo = gameRepository.get(game.getId());
+    public Collection<Player> getPlayers(UUID gameId) {
+        Game gameFromRepo = gameRepository.get(gameId);
         return gameFromRepo.getPlayers();
     }
 
