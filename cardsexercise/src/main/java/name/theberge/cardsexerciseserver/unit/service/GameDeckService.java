@@ -5,6 +5,7 @@ import name.theberge.cardsexerciseserver.model.CardDeck;
 import name.theberge.cardsexerciseserver.model.Game;
 import name.theberge.cardsexerciseserver.model.GameDeck;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public interface GameDeckService {
@@ -13,7 +14,7 @@ public interface GameDeckService {
 
     void addACardDeck(GameDeck gameDeck, CardDeck cardDeck);
 
-    Card dealCards(GameDeck gameDeck, int howMany);
+    Collection<Card> dealCards(UUID gameId, int howMany);
 
     int getUndealtCardCount();
 

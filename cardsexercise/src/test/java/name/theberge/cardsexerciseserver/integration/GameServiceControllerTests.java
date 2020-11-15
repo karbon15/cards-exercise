@@ -1,13 +1,10 @@
 package name.theberge.cardsexerciseserver.integration;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import name.theberge.cardsexerciseserver.dto.CreateDeckResponse;
-import name.theberge.cardsexerciseserver.dto.CreateGameResponse;
+import name.theberge.cardsexerciseserver.dto.*;
 
-import name.theberge.cardsexerciseserver.dto.DeckAssignmentRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -43,7 +42,7 @@ public class GameServiceControllerTests {
     public void shouldBeAbleToDeleteAGame() throws Exception {
         CreateGameResponse createResponse = createAGame();
 
-        ResultActions ra =  mockMvc.perform(delete("/v1/game/" + createResponse.getId()))
+        ResultActions ra =  mockMvc.perform(delete("/v1/games/" + createResponse.getId()))
                 .andExpect(status().isOk());
     }
 
@@ -58,17 +57,48 @@ public class GameServiceControllerTests {
         CreateDeckResponse createdDeck = createADeck();
         CreateGameResponse createdGame = createAGame();
 
-        DeckAssignmentRequest dar = new DeckAssignmentRequest(createdDeck.getId());
+        assignADeck(createdGame.getId(), createdDeck.getId());
+
+        //TODO: Observe the effects on the endpoints that provide info about the game deck
+    }
+
+    @Test
+    public void shouldBeAbleToAddAPlayer() throws Exception {
+        CreateGameResponse createdGame = createAGame();
+        createAPlayer(createdGame);
+        //TODO: Observe the effects on the future read endpoints
+    }
+
+    @Test
+    public void shouldBeAbleToRemoveAPlayer() throws Exception {
+        CreateGameResponse createdGame = createAGame();
+        CreatePlayerResponse createdPlayer = createAPlayer(createdGame);
 
         ResultActions ra =  mockMvc.perform(
-                post("/v1/game/" + createdGame.getId() + "/deckassignment")
-                        .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(dar))
+                delete("/v1/games/" + createdGame.getId() + "/players/" + createdPlayer.getId())
         ).andExpect(status().isOk());
+        //TODO: Observe the effects on the future read endpoints
+    }
+
+    @Test
+    public void shouldBeAbleToDealCards() throws Exception {
+        CreateGameResponse createdGame = createAGame();
+        CreatePlayerResponse createdPlayer = createAPlayer(createdGame);
+        CreateDeckResponse createdDeck = createADeck();
+        assignADeck(createdGame.getId(), createdDeck.getId());
+
+        DealerRequest dr = new DealerRequest(createdPlayer.getId(), 5);
+
+        ResultActions ra =  mockMvc.perform(
+                post("/v1/games/" + createdGame.getId() + "/dealer")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dr))
+        ).andExpect(status().isOk());
+        //TODO: Observe the effects on the future read endpoints
     }
 
     private CreateGameResponse createAGame() throws Exception {
-        ResultActions ra =  mockMvc.perform(post("/v1/game"))
+        ResultActions ra =  mockMvc.perform(post("/v1/games"))
                 .andExpect(status().isCreated());
 
         MvcResult result = ra.andReturn();
@@ -78,13 +108,35 @@ public class GameServiceControllerTests {
     }
 
     private CreateDeckResponse createADeck() throws Exception {
-        ResultActions ra =  mockMvc.perform(post("/v1/deck"))
+        ResultActions ra =  mockMvc.perform(post("/v1/decks"))
                 .andExpect(status().isCreated());
 
         MvcResult result = ra.andReturn();
         String contentAsString = result.getResponse().getContentAsString();
 
         return objectMapper.readValue(contentAsString, CreateDeckResponse.class);
+    }
+
+    private CreatePlayerResponse createAPlayer(CreateGameResponse game) throws Exception {
+        ResultActions ra = mockMvc.perform(
+                post("/v1/games/" + game.getId() + "/players")
+        ).andExpect(status().isCreated());
+
+        MvcResult result = ra.andReturn();
+
+        String contentAsString = result.getResponse().getContentAsString();
+
+        return objectMapper.readValue(contentAsString, CreatePlayerResponse.class);
+    }
+
+    private void assignADeck(UUID gameId, UUID deckId) throws Exception{
+        DeckAssignmentRequest dar = new DeckAssignmentRequest(deckId);
+
+        ResultActions ra =  mockMvc.perform(
+                post("/v1/games/" + gameId + "/deckassignments")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dar))
+        ).andExpect(status().isOk());
     }
 
 

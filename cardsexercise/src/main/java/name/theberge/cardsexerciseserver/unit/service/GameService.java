@@ -10,9 +10,9 @@ public interface GameService {
 
     void delete(UUID gameId);
 
-    void addPlayer(Game game, Player player);
+    Player createPlayer(UUID gameId);
 
-    void removePlayer(Game game, Player player);
+    void removePlayer(UUID gameId, UUID playerId);
 
     Collection<Card> getCardsForPlayer(Game game, Player player);
 
@@ -20,7 +20,7 @@ public interface GameService {
 
     void addACardDeck(UUID gameId, UUID deckId);
 
-    Card dealCards(Game game, Player player, int howMany);
+    Collection<Card> dealCards(UUID gameId, UUID playerId, int howMany);
 
     int getUndealtCardCount(Game game);
 

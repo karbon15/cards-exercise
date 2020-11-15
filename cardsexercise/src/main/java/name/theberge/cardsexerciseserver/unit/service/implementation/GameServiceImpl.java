@@ -38,19 +38,37 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void addPlayer(Game game, Player player) {
-        game.addPlayer(player);
+    public Player createPlayer(UUID gameId) {
+        Game gameFromRepo = gameRepository.get(gameId);
+        Player createdPlayer = new Player();
+        gameFromRepo.addPlayer(createdPlayer);
+        gameRepository.update(gameFromRepo);
+        return createdPlayer;
     }
 
     @Override
-    public void removePlayer(Game game, Player player) {
-        game.removePlayer(player);
+    public void removePlayer(UUID gameId, UUID playerId) {
+        Game gameFromRepo = gameRepository.get(gameId);
+        // No exception here if player isn't part of the game as DELETE is considered idempotent in REST
+        gameFromRepo.removePlayer(playerId);
+        gameRepository.update(gameFromRepo);
     }
 
     @Override
     public Collection<Card> getCardsForPlayer(Game game, Player player) throws PlayerNotFoundException {
         Game gameFromRepo = gameRepository.get(game.getId());
-        return getGamePlayer(gameFromRepo, player).getCards();
+        //return getGamePlayer(gameFromRepo, player).getCards();
+        return null;
+    }
+
+    @Override
+    public Collection<Card> dealCards(UUID gameId, UUID playerId, int howMany) {
+        Game gameFromRepo = gameRepository.get(gameId);
+        Player playerFromGame = getGamePlayer(gameFromRepo, playerId);
+        Collection<Card> dealtCards = gameDeckService.dealCards(gameId, howMany);
+        playerFromGame.receiveCards(dealtCards);
+        gameRepository.update(gameFromRepo);
+        return dealtCards;
     }
 
     @Override
@@ -71,16 +89,6 @@ public class GameServiceImpl implements GameService {
         cardDeckService.update(cardDeckFromRepo);
     }
 
-    @Override
-    public Card dealCards(Game game, Player player, int howMany) {
-        Game gameFromRepo = gameRepository.get(game.getId());
-        GameDeck gameDeckFromRepo = gameDeckService.getByGameId(game.getId());
-        Player playerFromGame = getGamePlayer(gameFromRepo, player);
-        Card dealtCard = gameDeckService.dealCards(gameDeckFromRepo, howMany);
-        playerFromGame.receiveACard(dealtCard);
-        gameRepository.update(gameFromRepo);
-        return dealtCard;
-    }
 
     @Override
     public int getUndealtCardCount(Game game) {
@@ -98,9 +106,9 @@ public class GameServiceImpl implements GameService {
         gameDeckService.shuffle();
     }
 
-    private Player getGamePlayer(Game game, Player player) {
+    private Player getGamePlayer(Game game, UUID playerId) {
         return game.getPlayers().stream()
-                .filter(p -> p.getId().equals(player.getId()))
+                .filter(p -> p.getId().equals(playerId))
                 .findFirst()
                 .orElseThrow(PlayerNotFoundException::new);
     }
