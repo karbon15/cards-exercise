@@ -3,6 +3,7 @@ package name.theberge.cardsexerciseserver.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import name.theberge.cardsexerciseserver.dto.*;
 
+import name.theberge.cardsexerciseserver.model.CardSuite;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -122,6 +128,46 @@ public class GameServiceControllerTests {
                         .collect(Collectors.toSet()));
     }
 
+    @Test
+    public void shouldBeAbleToGetCardCountsBySuit() throws Exception {
+        CreateGameResponse createdGame = createAGame();
+        CreateDeckResponse createdDeck = createADeck();
+        assignADeck(createdGame.getId(), createdDeck.getId());
+
+        CreatePlayerResponse createdPlayer = createAPlayer(createdGame);
+        dealCards(createdGame.getId(), createdPlayer.getId(), 1);
+
+        GetCardsBySuitResponse res = getCardCountBySuit(createdGame.getId());
+
+        Assertions.assertEquals(4, res.getCardsBySuit().size());
+
+        for (CardBySuit cardBySuit : res.getCardsBySuit()) {
+            assertThat(cardBySuit.getCount(), anyOf(equalTo(12), equalTo(13)));
+        }
+
+        List<CardBySuit> incompleteSuite = res.getCardsBySuit().stream()
+                .filter(cbs -> cbs.getCount() == 12)
+                .collect(Collectors.toList());
+        Assertions.assertEquals(1, incompleteSuite.size());
+    }
+
+    @Test
+    public void shouldBeAbleToGetCardCountsBySuitAndValue() throws Exception {
+        CreateGameResponse createdGame = createAGame();
+        CreateDeckResponse createdDeck = createADeck();
+        assignADeck(createdGame.getId(), createdDeck.getId());
+
+        CreatePlayerResponse createdPlayer = createAPlayer(createdGame);
+        dealCards(createdGame.getId(), createdPlayer.getId(), 1);
+
+        GetCardsBySuitAndValueResponse res = getCardCountBySuitAndValue(createdGame.getId());
+
+        Assertions.assertEquals(51, res.getCardsBySuitAndValue().size());
+        for (CardBySuitAndValue cardBySuitAndValue : res.getCardsBySuitAndValue()) {
+            assertThat(cardBySuitAndValue.getCount(), equalTo(1));
+        }
+    }
+
     private CreateGameResponse createAGame() throws Exception {
         ResultActions ra =  mockMvc.perform(post("/v1/games"))
                 .andExpect(status().isCreated());
@@ -165,7 +211,7 @@ public class GameServiceControllerTests {
     }
 
     private void dealCards(UUID gameId, UUID playerId, int howMany) throws Exception {
-        DealerRequest dr = new DealerRequest(playerId, 5);
+        DealerRequest dr = new DealerRequest(playerId, howMany);
 
         mockMvc.perform(
                 post("/v1/games/" + gameId + "/dealer")
@@ -196,5 +242,31 @@ public class GameServiceControllerTests {
         String contentAsString = result.getResponse().getContentAsString();
 
         return objectMapper.readValue(contentAsString, GetGamePlayersResponse.class);
+    }
+
+    private GetCardsBySuitResponse getCardCountBySuit(UUID gameId) throws Exception {
+        ResultActions ra = mockMvc.perform(
+                get("/v1/games/" + gameId + "/gamedeck")
+                .accept("application/bysuit+json")
+        ).andExpect(status().isOk());
+
+        MvcResult result = ra.andReturn();
+
+        String contentAsString = result.getResponse().getContentAsString();
+
+        return objectMapper.readValue(contentAsString, GetCardsBySuitResponse.class);
+    }
+
+    private GetCardsBySuitAndValueResponse getCardCountBySuitAndValue(UUID gameId) throws Exception {
+        ResultActions ra = mockMvc.perform(
+                get("/v1/games/" + gameId + "/gamedeck")
+                        .accept("application/bysuitandvalue+json")
+        ).andExpect(status().isOk());
+
+        MvcResult result = ra.andReturn();
+
+        String contentAsString = result.getResponse().getContentAsString();
+
+        return objectMapper.readValue(contentAsString, GetCardsBySuitAndValueResponse.class);
     }
 }
