@@ -93,13 +93,13 @@ public class GameServiceImpl implements GameService {
 
 
     @Override
-    public Map<CardSuite, Integer> getUndealtCardCountBySuit(UUID gameId) {
+    public Map<CardSuit, Integer> getUndealtCardCountBySuit(UUID gameId) {
         return gameDeckService.getUndealtCardCountBySuit(gameId);
 
     }
 
     @Override
-    public Map<Pair<CardSuite, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId) {
+    public Map<Pair<CardSuit, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId) {
         return gameDeckService.getUndealtCardCountBySuitAndValue(gameId);
     }
 

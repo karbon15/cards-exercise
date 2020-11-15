@@ -15,9 +15,9 @@ public interface GameDeckService {
 
     Collection<Card> dealCards(UUID gameId, int howMany);
 
-    Map<CardSuite, Integer> getUndealtCardCountBySuit(UUID gameId);
+    Map<CardSuit, Integer> getUndealtCardCountBySuit(UUID gameId);
 
-    Map<Pair<CardSuite, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId);
+    Map<Pair<CardSuit, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId);
 
     void shuffle();
 

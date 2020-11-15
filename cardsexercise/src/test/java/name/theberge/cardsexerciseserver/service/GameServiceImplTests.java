@@ -242,8 +242,8 @@ public class GameServiceImplTests {
     }
 
     @Test
-    @DisplayName("Getting undealt cards by suite should call the Game Deck Service")
-    public void gettingUndealtCardsBySuite() {
+    @DisplayName("Getting undealt cards by suit should call the Game Deck Service")
+    public void gettingUndealtCardsBySuit() {
         UUID gameId = UUID.randomUUID();
 
         Mockito.when(gameDeckService.getUndealtCardCountBySuit(Mockito.eq(gameId)))
@@ -255,8 +255,8 @@ public class GameServiceImplTests {
     }
 
     @Test
-    @DisplayName("Getting undealt cards by suite and value should call the Game Deck Service")
-    public void gettingUndealtCardsBySuiteAndValue() {
+    @DisplayName("Getting undealt cards by suit and value should call the Game Deck Service")
+    public void gettingUndealtCardsBySuitAndValue() {
         UUID gameId = UUID.randomUUID();
 
         Mockito.when(gameDeckService.getUndealtCardCountBySuitAndValue(Mockito.eq(gameId)))

@@ -3,7 +3,7 @@ package name.theberge.cardsexerciseserver.formatter;
 import name.theberge.cardsexerciseserver.dto.GetGamePlayersResponse;
 import name.theberge.cardsexerciseserver.model.Card;
 import name.theberge.cardsexerciseserver.model.CardFaceValue;
-import name.theberge.cardsexerciseserver.model.CardSuite;
+import name.theberge.cardsexerciseserver.model.CardSuit;
 import name.theberge.cardsexerciseserver.model.Player;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -20,13 +20,13 @@ public class GamePlayersResponseFormatterTests {
         Player playerB = new Player();
 
         playerA.receiveCards(List.of(
-                new Card(CardSuite.CLUBS, CardFaceValue.TEN),
-                new Card(CardSuite.HEARTS, CardFaceValue.K)
+                new Card(CardSuit.CLUBS, CardFaceValue.TEN),
+                new Card(CardSuit.HEARTS, CardFaceValue.K)
         ));
 
         playerB.receiveCards(List.of(
-                new Card(CardSuite.CLUBS, CardFaceValue.SEVEN),
-                new Card(CardSuite.HEARTS, CardFaceValue.Q)
+                new Card(CardSuit.CLUBS, CardFaceValue.SEVEN),
+                new Card(CardSuit.HEARTS, CardFaceValue.Q)
         ));
 
         GetGamePlayersResponse response = GamePlayersResponseFormatter.toGamePlayersResponse(List.of(playerA, playerB));

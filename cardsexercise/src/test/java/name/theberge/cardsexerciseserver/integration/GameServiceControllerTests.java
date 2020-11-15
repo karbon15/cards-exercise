@@ -3,7 +3,6 @@ package name.theberge.cardsexerciseserver.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import name.theberge.cardsexerciseserver.dto.*;
 
-import name.theberge.cardsexerciseserver.model.CardSuite;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Set;
@@ -63,7 +61,6 @@ public class GameServiceControllerTests {
         CreateGameResponse createdGame = createAGame();
 
         assignADeck(createdGame.getId(), createdDeck.getId());
-
         //TODO: Observe the effects on the endpoints that provide info about the game deck
     }
 
@@ -145,10 +142,10 @@ public class GameServiceControllerTests {
             assertThat(cardBySuit.getCount(), anyOf(equalTo(12), equalTo(13)));
         }
 
-        List<CardBySuit> incompleteSuite = res.getCardsBySuit().stream()
+        List<CardBySuit> incompleteSuit = res.getCardsBySuit().stream()
                 .filter(cbs -> cbs.getCount() == 12)
                 .collect(Collectors.toList());
-        Assertions.assertEquals(1, incompleteSuite.size());
+        Assertions.assertEquals(1, incompleteSuit.size());
     }
 
     @Test

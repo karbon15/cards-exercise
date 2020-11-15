@@ -24,9 +24,9 @@ public interface GameService {
 
     Collection<Card> dealCards(UUID gameId, UUID playerId, int howMany);
 
-    Map<CardSuite, Integer> getUndealtCardCountBySuit(UUID gameId);
+    Map<CardSuit, Integer> getUndealtCardCountBySuit(UUID gameId);
 
-    Map<Pair<CardSuite, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId);
+    Map<Pair<CardSuit, CardFaceValue>, Integer>  getUndealtCardCountBySuitAndValue(UUID gameId);
 
     void shuffle(Game game);
 }
