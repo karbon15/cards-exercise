@@ -1,7 +1,5 @@
 package name.theberge.cardsexerciseserver.integration;
 
-import static org.hamcrest.Matchers.is;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import name.theberge.cardsexerciseserver.dto.*;
 
@@ -14,7 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -87,7 +87,6 @@ public class GameServiceControllerTests {
         assignADeck(createdGame.getId(), createdDeck.getId());
 
         dealCards(createdGame.getId(), createdPlayer.getId(), 5);
-        //TODO: Observe the effects on the future read endpoints
     }
 
     @Test
@@ -101,6 +100,26 @@ public class GameServiceControllerTests {
         GetHandResponse handResponse = getHand(createdGame.getId(), createdPlayer.getId());
 
         Assertions.assertEquals(5, handResponse.getCards().size());
+    }
+
+    @Test
+    public void shouldBeAbleToRetrieveAGamesPlayers() throws Exception {
+        CreateGameResponse createdGame = createAGame();
+        CreatePlayerResponse createdPlayer = createAPlayer(createdGame);
+        CreatePlayerResponse createdPlayer2 = createAPlayer(createdGame);
+        CreateDeckResponse createdDeck = createADeck();
+        assignADeck(createdGame.getId(), createdDeck.getId());
+        dealCards(createdGame.getId(), createdPlayer.getId(), 5);
+        dealCards(createdGame.getId(), createdPlayer2.getId(), 5);
+
+        GetGamePlayersResponse gamePlayersResponse = getGamePlayers(createdGame.getId());
+
+        Assertions.assertEquals(2, gamePlayersResponse.getPlayers().size());
+        Assertions.assertEquals(
+                Set.of(createdPlayer.getId(), createdPlayer2.getId()),
+                gamePlayersResponse.getPlayers().stream()
+                        .map(p -> p.getId())
+                        .collect(Collectors.toSet()));
     }
 
     private CreateGameResponse createAGame() throws Exception {
@@ -138,7 +157,7 @@ public class GameServiceControllerTests {
     private void assignADeck(UUID gameId, UUID deckId) throws Exception{
         DeckAssignmentRequest dar = new DeckAssignmentRequest(deckId);
 
-        ResultActions ra =  mockMvc.perform(
+        mockMvc.perform(
                 post("/v1/games/" + gameId + "/deckassignments")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dar))
@@ -156,12 +175,8 @@ public class GameServiceControllerTests {
     }
 
     private GetHandResponse getHand(UUID gameId, UUID playerId) throws Exception {
-        DealerRequest dr = new DealerRequest(playerId, 5);
-
         ResultActions ra = mockMvc.perform(
                 get("/v1/games/" + gameId + "/players/" + playerId + "/hand")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dr))
         ).andExpect(status().isOk());
 
         MvcResult result = ra.andReturn();
@@ -171,7 +186,15 @@ public class GameServiceControllerTests {
         return objectMapper.readValue(contentAsString, GetHandResponse.class);
     }
 
+    private GetGamePlayersResponse getGamePlayers(UUID gameId) throws Exception {
+        ResultActions ra = mockMvc.perform(
+                get("/v1/games/" + gameId + "/players")
+        ).andExpect(status().isOk());
 
+        MvcResult result = ra.andReturn();
 
+        String contentAsString = result.getResponse().getContentAsString();
 
+        return objectMapper.readValue(contentAsString, GetGamePlayersResponse.class);
+    }
 }

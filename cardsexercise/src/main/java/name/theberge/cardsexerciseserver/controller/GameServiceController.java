@@ -1,5 +1,6 @@
 package name.theberge.cardsexerciseserver.controller;
 import name.theberge.cardsexerciseserver.dto.*;
+import name.theberge.cardsexerciseserver.formatter.GamePlayersResponseFormatter;
 import name.theberge.cardsexerciseserver.model.*;
 import name.theberge.cardsexerciseserver.service.CardDeckService;
 import name.theberge.cardsexerciseserver.service.GameService;
@@ -70,13 +71,12 @@ public class GameServiceController {
     @GetMapping(value = "/v1/games/{gameId}/players/{playerId}/hand")
     public GetHandResponse getPlayerHand(@PathVariable UUID gameId,
                                          @PathVariable UUID playerId) {
-
         return new GetHandResponse(gameService.getCardsForPlayer(gameId, playerId));
     }
 
     @GetMapping(value = "/v1/games/{gameId}/players")
-    public void getPlayers(@RequestParam String gameId) {
-        gameService.getPlayers(new Game());
+    public GetGamePlayersResponse getPlayers(@PathVariable UUID gameId) {
+        return GamePlayersResponseFormatter.toGamePlayersResponse(gameService.getPlayers(gameId));
     }
 
     @GetMapping(value = "/v1/games/{gameId}/cards")
